@@ -1,0 +1,34 @@
+tree("Root")
+		fallback
+			while hasEnergy 
+				tree "Work"
+			tree "GetCoffe"
+			
+
+tree "Work"	
+	fallback
+		while atWorkplace
+			//Work
+			Succeed
+		tree "GoToWorkplace"
+		
+
+tree "GoToWorkplace"
+	goToWork
+	//Function go to workplace
+	//Check if there
+
+tree "GetCoffe"
+	sequence
+		tree "GoToMachine"
+		//Arrive
+		tree "Drink"
+
+tree "GoToMachine"
+	goToMachine
+	//Function go to machine
+	//Check if there
+
+tree "Drink"
+	Succeed
+	//Function refill stamina
