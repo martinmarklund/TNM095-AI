@@ -1,22 +1,23 @@
 tree("Root")
 		fallback
-			while NeedsEnergy 
+			while not NeedsEnergy 
 				tree "Work"
 			tree "GetCoffe"
 			
-
 tree "Work"	
 	fallback
-		while arrived //Maybe something else?
+		while isWorking
 			//Work
 			Succeed
 		tree "GoToWorkplace"
 		
 
 tree "GoToWorkplace"
-	Move("Workplace")
-	//Function go to workplace
-	//Check if there
+	sequence
+		Move("Workstation")
+		arrived //Check if there
+		//Function go to workplace
+		//Check if there
 
 tree "GetCoffe"
 	sequence
@@ -25,11 +26,8 @@ tree "GetCoffe"
 
 tree "GoToMachine"
 	sequence
-		Move("Coffee) //Function go to machine
-		arrived //Check if there
-		
+		Move("Coffee") //Function go to machine
+		arrived
 
 tree "Drink"
-	RefillEnergy("Coffee)
-	Succeed
-	//Function refill stamina
+	RefillEnergy("Coffee") //Function refill stamina
