@@ -16,6 +16,7 @@ public class Worker : MonoBehaviour
     // Agent related variables
     public NavMeshAgent agent;
     public float energy = 5.0f;
+    public float occupation = 1.0f;
     public Task move;
 
     //**** TASKS ****//
@@ -81,10 +82,12 @@ public class Worker : MonoBehaviour
 
 	// Update is called once per frame
 	void Update()
-	{   
+	{
+        // Check what the agent is doing
+        occupation = Occupation();
 
         // Drain/Increase needs
-		energy -= 0.3f * Time.deltaTime;
+        energy -= Time.deltaTime * occupation * 0.3f;
 
         IsAtGoal(agent.destination);
 
@@ -107,6 +110,16 @@ public class Worker : MonoBehaviour
     {
         arrived = false;
         agent.destination = goal.position;
+    }
+
+    public float Occupation()
+    {
+        if (isWorking)
+            return 1.3f;
+        else if (!arrived)
+            return 0.5f;
+        else
+            return 1.0f;
     }
 
     /* 
