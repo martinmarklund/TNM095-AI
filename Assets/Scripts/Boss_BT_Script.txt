@@ -1,0 +1,23 @@
+tree("Root")
+	fallback
+		while playerInControl
+			Succeed
+		tree "NPCTree"
+		
+tree "NPCTree"
+	fallback
+		tree "Patrol"
+		tree "Office"
+
+tree "Patrol"
+	Sequence
+		isNextPP
+		Sequence
+			goToPP()
+			Wait(100)
+
+
+tree "Office"
+	Sequence
+		GoToOffice()
+		Wait(100)
