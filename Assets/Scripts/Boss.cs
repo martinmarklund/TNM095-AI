@@ -19,6 +19,7 @@ public class Boss : MonoBehaviour
     public int nextPP;
     public bool arrived;
     public bool goCrazy;
+    private float speed;
     
 
     [Task]
@@ -48,7 +49,8 @@ public class Boss : MonoBehaviour
 
         keyStrokeTimer = 0;
         isNextPP = false;
-        nextPP = -1;        
+        nextPP = -1;
+        speed = 3.5f;
     }
 
     // Update is called once per frame
@@ -80,22 +82,25 @@ public class Boss : MonoBehaviour
 
     public void readKeyEv()
     {
-        if (Input.GetKey("w"))
+        if (Input.GetKey("w") || Input.GetKey("up"))
         {
             Debug.Log("W");
-            
+            gameObject.transform.position += Vector3.forward * speed * Time.deltaTime;
         }
-        if (Input.GetKey("s"))
+        if (Input.GetKey("s") || Input.GetKey("down"))
         {
             Debug.Log("S");
+            gameObject.transform.position += Vector3.back * speed * Time.deltaTime;
         }
-        if (Input.GetKey("d"))
+        if (Input.GetKey("d") || Input.GetKey("right"))
         {
             Debug.Log("D");
+            gameObject.transform.position += Vector3.right * speed * Time.deltaTime;
         }
-        if (Input.GetKey("a"))
+        if (Input.GetKey("a") || Input.GetKey("left"))
         {
             Debug.Log("A");
+            gameObject.transform.position += Vector3.left * speed * Time.deltaTime;
         }
     }
 
