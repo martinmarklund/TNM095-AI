@@ -9,6 +9,7 @@ TagManager:
   - Worker
   - Workstation
   - CoffeMachine
+  - PatrolPoint
   layers:
   - Default
   - TransparentFX

@@ -1,8 +1,8 @@
 tree("Root")
-	fallback
-		while playerInControl
-			Succeed
-		tree "NPCTree"
+	//race
+		while not playerInControl
+		//	Succeed
+			tree "NPCTree"
 		
 tree "NPCTree"
 	fallback

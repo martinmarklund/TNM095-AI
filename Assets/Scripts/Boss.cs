@@ -6,7 +6,7 @@ using System.Linq;
 using Panda;
 
 public class Boss : MonoBehaviour
-{
+{   
 
     public Transform office;
     public Vector3[] patrolPoints;
@@ -14,25 +14,26 @@ public class Boss : MonoBehaviour
     public bool monitorWorkers;
 
     private bool atOffice;
-    private float keyStrokeTimer;
+    public float keyStrokeTimer;
     private Task move;
     public int nextPP;
     public bool arrived;
     public bool goCrazy;
+    
 
     [Task]
     public bool isNextPP;
 
     [Task]
-    public bool playerInControl()    
+    public bool playerInControl()
     {
-        if (keyStrokeTimer < 0)
+        if (keyStrokeTimer > 0)
         {
-            return true;            
+            return true;
         }
         else
             return false;
-    }    
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -47,14 +48,23 @@ public class Boss : MonoBehaviour
 
         keyStrokeTimer = 0;
         isNextPP = false;
-        nextPP = -1;
+        nextPP = -1;        
     }
 
     // Update is called once per frame
     void Update()
     {        
-        IsAtGoal();                            
-    }   
+        IsAtGoal();
+        Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
+
+        keyStrokeTimer -= Time.deltaTime;
+        if (Input.anyKey)
+        {
+            keyStrokeTimer = 5.0f;            
+            agent.ResetPath();
+            readKeyEv();
+        }        
+    }          
 
     // True if agent is close enough to goal, otherwise false
     public void IsAtGoal()
@@ -65,6 +75,27 @@ public class Boss : MonoBehaviour
             move.Complete(true);
             arrived = true;
             nextPP++;
+        }
+    }
+
+    public void readKeyEv()
+    {
+        if (Input.GetKey("w"))
+        {
+            Debug.Log("W");
+            
+        }
+        if (Input.GetKey("s"))
+        {
+            Debug.Log("S");
+        }
+        if (Input.GetKey("d"))
+        {
+            Debug.Log("D");
+        }
+        if (Input.GetKey("a"))
+        {
+            Debug.Log("A");
         }
     }
 
