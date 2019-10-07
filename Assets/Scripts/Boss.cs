@@ -51,6 +51,7 @@ public class Boss : MonoBehaviour
         isNextPP = false;
         nextPP = -1;
         speed = 3.5f;
+        agent.destination = office.position;
     }
 
     // Update is called once per frame
@@ -71,7 +72,7 @@ public class Boss : MonoBehaviour
     // True if agent is close enough to goal, otherwise false
     public void IsAtGoal()
     {
-        Debug.Log(agent.radius);
+        //Debug.Log(agent.radius);
         if (!arrived && Vector3.Distance(gameObject.transform.position, agent.destination) < 2.0f)
         {                     
             move.Complete(true);
@@ -83,23 +84,19 @@ public class Boss : MonoBehaviour
     public void readKeyEv()
     {
         if (Input.GetKey("w") || Input.GetKey("up"))
-        {
-            Debug.Log("W");
+        {           
             gameObject.transform.position += Vector3.forward * speed * Time.deltaTime;
         }
         if (Input.GetKey("s") || Input.GetKey("down"))
-        {
-            Debug.Log("S");
+        {        
             gameObject.transform.position += Vector3.back * speed * Time.deltaTime;
         }
         if (Input.GetKey("d") || Input.GetKey("right"))
-        {
-            Debug.Log("D");
+        {        
             gameObject.transform.position += Vector3.right * speed * Time.deltaTime;
         }
         if (Input.GetKey("a") || Input.GetKey("left"))
-        {
-            Debug.Log("A");
+        {         
             gameObject.transform.position += Vector3.left * speed * Time.deltaTime;
         }
     }

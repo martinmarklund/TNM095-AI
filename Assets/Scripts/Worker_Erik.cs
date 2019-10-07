@@ -7,7 +7,6 @@ using Panda;
 public class Worker_Erik : MonoBehaviour
 {
 
-    
     // Position related variables
     private Vector3 agentDestination;
     public Transform coffeeMachine;
@@ -19,6 +18,7 @@ public class Worker_Erik : MonoBehaviour
     public float energy = 5.0f;
     public float occupation = 1.0f;
     public Task move;
+    private LayerMask mask;
 
     //**** TASKS ****//
     // Check if energy level is too low
@@ -32,8 +32,7 @@ public class Worker_Erik : MonoBehaviour
     {
         if (energy < 0)
         {
-            return true;
-            Task.current.Succeed();
+            return true;            
         }
         else
             return false;
@@ -81,10 +80,16 @@ public class Worker_Erik : MonoBehaviour
 	{
 		agent = GetComponent<NavMeshAgent>();
 		Move(workstation);
-	}
+        mask = LayerMask.GetMask("Ignore Raycast");
+    }
 
-	// Update is called once per frame
-	void Update()
+    private void FixedUpdate()
+    {
+        IsBossNear();
+    }
+
+    // Update is called once per frame
+    void Update()
 	{
         // Check what the agent is doing
         occupation = Occupation();
@@ -92,8 +97,7 @@ public class Worker_Erik : MonoBehaviour
         // Drain/Increase needs
         energy -= Time.deltaTime * occupation * 0.3f;
 
-        IsAtGoal(agent.destination);
-        IsBossNear();
+        IsAtGoal(agent.destination);        
 	}
 
     // True if agent is close enough to goal, otherwise false
@@ -111,34 +115,28 @@ public class Worker_Erik : MonoBehaviour
     public void IsBossNear()
     {
         if (Vector3.Distance(gameObject.transform.position, boss.position) < 20.0f) //TODO: hardcoded distance, should only check 2d
-        {
-            isBossNear = true;
-            //If no wall is between            
-            RaycastHit[] hits;
-            hits = Physics.RaycastAll(gameObject.transform.position, (boss.position - gameObject.transform.position), 20.0f); //TODO have same distance as above
-
-            Debug.DrawRay(gameObject.transform.position, Vector3.Normalize(boss.position - gameObject.transform.position) * 20.0f, Color.red);
-
-            //Debug.Log(hits[hits.Length - 1].distance);
-
-            for (int i = 0; i < hits.Length; i++)
+        {                        
+            RaycastHit hit;
+            if (Physics.Raycast(gameObject.transform.position, (boss.position - gameObject.transform.position), out hit, 20.0f, ~mask))
             {
-                Debug.Log(hits[i].transform.tag);
-                if(hits[i].transform.tag == "Boss")
+                if(hit.transform.tag == "Boss")
                 {
-                    break;
+                    isBossNear = true;
+                    
                 }
-                else if (hits[i].transform.tag == "Wall") //TODO if several floors check for roof hit too
+                else if (hit.transform.tag == "Wall") //TODO if several floors check for roof hit too
                 {
-                    isBossNear = false;
-                    break;
-                }                            
-            }              
+                    isBossNear = false;                    
+                }
+                Debug.DrawRay(gameObject.transform.position, Vector3.Normalize(boss.position - gameObject.transform.position) * hit.distance, Color.yellow);                
+            }
         }
         else
         {
             isBossNear = false;
         }
+
+        
     }
 
     // Overloaded move that is used within script to assign destination
