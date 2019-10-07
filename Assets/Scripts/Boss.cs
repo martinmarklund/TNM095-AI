@@ -65,13 +65,8 @@ public class Boss : MonoBehaviour
 
         keyStrokeTimer -= Time.deltaTime;
         if (Input.anyKey)
-        {            
-            keyStrokeTimer = 5.0f;            
-            agent.ResetPath();
-            playerWasInControll = true;
-            isNextPP = true;
-            readKeyEv();
-            //Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));        Can use this instead?
+        {
+            PlayerCtrlMove();            
         }
     }          
 
@@ -86,24 +81,20 @@ public class Boss : MonoBehaviour
         }
     }
 
-    public void readKeyEv() //TODO fix metrics so diagonal isnt faster
+    //Set variables that player controll the boss, read and move character
+    public void PlayerCtrlMove()
     {
-        if (Input.GetKey("w") || Input.GetKey("up"))
-        {           
-            gameObject.transform.position += Vector3.forward * speed * Time.deltaTime;
-        }
-        if (Input.GetKey("s") || Input.GetKey("down"))
-        {        
-            gameObject.transform.position += Vector3.back * speed * Time.deltaTime;
-        }
-        if (Input.GetKey("d") || Input.GetKey("right"))
-        {        
-            gameObject.transform.position += Vector3.right * speed * Time.deltaTime;
-        }
-        if (Input.GetKey("a") || Input.GetKey("left"))
-        {         
-            gameObject.transform.position += Vector3.left * speed * Time.deltaTime;
-        }
+        keyStrokeTimer = 5.0f;
+        agent.ResetPath();
+        playerWasInControll = true;
+        isNextPP = true;
+
+        Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
+        //To have an even speed and not move faster diagonal
+        if (moveDirection.magnitude > 1)
+            moveDirection /= moveDirection.magnitude;
+
+        gameObject.transform.position += moveDirection * speed * Time.deltaTime;
     }
 
     [Task]
