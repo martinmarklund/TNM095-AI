@@ -20,7 +20,7 @@ public class Boss : MonoBehaviour
     public bool arrived;
     public bool goCrazy;
     private float speed;
-    
+    private bool playerWasInControll;
 
     [Task]
     public bool isNextPP;
@@ -52,6 +52,7 @@ public class Boss : MonoBehaviour
         nextPP = -1;
         speed = 3.5f;
         agent.destination = office.position;
+        playerWasInControll = false;
     }
 
     // Update is called once per frame
@@ -62,9 +63,11 @@ public class Boss : MonoBehaviour
 
         keyStrokeTimer -= Time.deltaTime;
         if (Input.anyKey)
-        {
+        {            
             keyStrokeTimer = 5.0f;            
             agent.ResetPath();
+            playerWasInControll = true;
+            isNextPP = true;
             readKeyEv();
         }        
     }          
@@ -73,7 +76,7 @@ public class Boss : MonoBehaviour
     public void IsAtGoal()
     {
         //Debug.Log(agent.radius);
-        if (!arrived && Vector3.Distance(gameObject.transform.position, agent.destination) < 2.0f)
+        if (!arrived && agent.remainingDistance < 0.2f)
         {                     
             move.Complete(true);
             arrived = true;
@@ -81,7 +84,7 @@ public class Boss : MonoBehaviour
         }
     }
 
-    public void readKeyEv()
+    public void readKeyEv() //TODO fix metrics so diagonal isnt faster
     {
         if (Input.GetKey("w") || Input.GetKey("up"))
         {           
@@ -102,19 +105,57 @@ public class Boss : MonoBehaviour
     }
 
     [Task]
-    void GoToOffice()
+    public void GoToOffice()
     {
         arrived = false;
         agent.destination = office.position;
         move = Task.current;
         isNextPP = true;
     }
+    
+    public void FindClosestPP()
+    {
+        playerWasInControll = false;        
+        NavMeshPath path = new NavMeshPath();
+        float minPathLength = 99999.0f;
+
+        for (int i = 0; i < patrolPoints.Length+1; i++)
+        {
+            path.ClearCorners();
+            float pathL = 0.0f;
+
+            if(i < patrolPoints.Length)
+                agent.CalculatePath(patrolPoints[i], path);            
+            else
+                agent.CalculatePath(office.position, path);
+
+            if (path.status == NavMeshPathStatus.PathComplete)
+            {
+                
+                for (int j = 1; j < path.corners.Length; ++j)
+                {
+                    pathL += Vector3.Distance(path.corners[j - 1], path.corners[j]);
+                }
+                
+                if (pathL < minPathLength)
+                {
+                    minPathLength = pathL;
+                    nextPP = i;
+                }                
+            }
+        }        
+    }
 
     [Task]
-    public void goToPP()
+    public void GoToPP()
     {
+        if (playerWasInControll)
+        {
+            FindClosestPP();
+        }
+        
         //Debug.Log(nextPP + " : " + patrolPoints.Length);
-        if(nextPP > patrolPoints.Length-1)
+        if (nextPP > patrolPoints.Length-1)
         {
             isNextPP = false;
             Task.current.Fail();

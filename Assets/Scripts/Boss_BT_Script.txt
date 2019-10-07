@@ -13,7 +13,7 @@ tree "Patrol"
 	Sequence
 		isNextPP
 		Sequence
-			goToPP()
+			GoToPP()
 			Wait(10)
 
 
