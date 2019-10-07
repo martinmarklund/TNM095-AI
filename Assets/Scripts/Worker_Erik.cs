@@ -124,7 +124,7 @@ public class Worker_Erik : MonoBehaviour
                     isBossNear = true;
                     
                 }
-                else if (hit.transform.tag == "Wall") //TODO if several floors check for roof hit too
+                else if (hit.transform.tag == "Wall" || hit.transform.tag == "Door") //TODO if several floors check for roof hit too
                 {
                     isBossNear = false;                    
                 }
