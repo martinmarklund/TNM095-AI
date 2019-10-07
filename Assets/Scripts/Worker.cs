@@ -12,25 +12,30 @@ public class Worker : MonoBehaviour
     private Vector3 agentDestination;
     public Transform coffeeMachine;
 	public Transform workstation;
+    public Transform boss;
 
     // Agent related variables
     public NavMeshAgent agent;
+
     public float energy = 5.0f;
     public float occupation = 1.0f;
-    public Task move;
+
+    private Task move;
+    private LayerMask mask;
 
     //**** TASKS ****//
     // Check if energy level is too low
     [Task]
     public bool isWorking;
+    [Task]
+    public bool isBossNear;
 
     [Task]
     public bool NeedsEnergy()
     {
         if (energy < 0)
         {
-            return true;
-            Task.current.Succeed();
+            return true;            
         }
         else
             return false;
@@ -78,10 +83,16 @@ public class Worker : MonoBehaviour
 	{
 		agent = GetComponent<NavMeshAgent>();
 		Move(workstation);
-	}
+        mask = ~LayerMask.GetMask("Ignore Raycast");
+    }
 
-	// Update is called once per frame
-	void Update()
+    private void FixedUpdate()
+    {
+        IsBossNear();
+    }
+
+    // Update is called once per frame
+    void Update()
 	{
         // Check what the agent is doing
         occupation = Occupation();
@@ -104,6 +115,37 @@ public class Worker : MonoBehaviour
         else
             arrived = false;
 	}
+
+    //Checks if the boss is near and see you
+    public void IsBossNear()
+    {
+        //First check if the boss is within view istance
+        if (Vector3.Distance(gameObject.transform.position, boss.position) < 20.0f) //TODO: hardcoded distance, should only check 2d?
+        {
+            isBossNear = false;
+            //Cast a raycast and see what it hits with a layermask
+            RaycastHit hit;
+            if (Physics.Raycast(gameObject.transform.position, (boss.position - gameObject.transform.position), out hit, 20.0f, mask))
+            {
+                //If target hit is boss the boss is near and sees you
+                if (hit.transform.tag == "Boss")
+                {
+                    isBossNear = true;
+
+                }
+                //If wall or door is hit the boss cant see you
+                else if (hit.transform.tag == "Wall" || hit.transform.tag == "Door") //TODO if several floors check for roof/floor hit too
+                {
+                    isBossNear = false;
+                }
+                Debug.DrawRay(gameObject.transform.position, Vector3.Normalize(boss.position - gameObject.transform.position) * hit.distance, Color.yellow);
+            }
+        }
+        else
+        {
+            isBossNear = false;
+        }
+    }
 
     // Overloaded move that is used within script to assign destination
     void Move(Transform goal)
