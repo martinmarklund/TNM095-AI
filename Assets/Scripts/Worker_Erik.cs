@@ -7,7 +7,7 @@ using Panda;
 public class Worker_Erik : MonoBehaviour
 {
 
-    // Position related variables
+    // Position related variables>
     private Vector3 agentDestination;
     public Transform coffeeMachine;
 	public Transform workstation;
@@ -15,9 +15,11 @@ public class Worker_Erik : MonoBehaviour
 
     // Agent related variables
     public NavMeshAgent agent;
+
     public float energy = 5.0f;
     public float occupation = 1.0f;
-    public Task move;
+
+    private Task move;
     private LayerMask mask;
 
     //**** TASKS ****//
@@ -114,7 +116,7 @@ public class Worker_Erik : MonoBehaviour
 
     public void IsBossNear()
     {
-        if (Vector3.Distance(gameObject.transform.position, boss.position) < 20.0f) //TODO: hardcoded distance, should only check 2d
+        if (Vector3.Distance(gameObject.transform.position, boss.position) < 20.0f) //TODO: hardcoded distance, should only check 2d?
         {                        
             RaycastHit hit;
             if (Physics.Raycast(gameObject.transform.position, (boss.position - gameObject.transform.position), out hit, 20.0f, ~mask))
@@ -124,7 +126,7 @@ public class Worker_Erik : MonoBehaviour
                     isBossNear = true;
                     
                 }
-                else if (hit.transform.tag == "Wall" || hit.transform.tag == "Door") //TODO if several floors check for roof hit too
+                else if (hit.transform.tag == "Wall" || hit.transform.tag == "Door") //TODO if several floors check for roof/floor hit too
                 {
                     isBossNear = false;                    
                 }

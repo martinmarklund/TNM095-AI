@@ -95,6 +95,7 @@ public class Boss : MonoBehaviour
             moveDirection /= moveDirection.magnitude;
 
         gameObject.transform.position += moveDirection * speed * Time.deltaTime;
+        gameObject.transform.rotation = Quaternion.LookRotation(moveDirection);
     }
 
     [Task]
