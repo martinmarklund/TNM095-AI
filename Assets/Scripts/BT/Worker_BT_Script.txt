@@ -1,8 +1,12 @@
 tree("Root")
-		fallback
+		fallback			
 			while not NeedsEnergy 
 				tree "Work"
-			tree "GetCoffe"
+			sequence
+				fallback
+					while not isBossNear
+						tree "GetCoffe"
+					tree "Work"
 			
 tree "Work"	
 	fallback

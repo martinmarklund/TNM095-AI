@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Wall
+  - Boss
+  - Worker
+  - Workstation
+  - CoffeMachine
+  - PatrolPoint
   layers:
   - Default
   - TransparentFX
