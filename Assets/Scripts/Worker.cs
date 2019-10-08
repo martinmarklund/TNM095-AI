@@ -13,15 +13,18 @@ public class Worker : MonoBehaviour
     public Transform coffeeMachine;
 	public Transform workstation;
     public Transform boss;
+    public Transform toilet;
+    public Transform sink;
 
     // Agent related variables
     public NavMeshAgent agent;
-
-    public float energy = 5.0f;
+    //public float energy = 5.0f;
     public float occupation = 1.0f;
-
+    //public float bladder = 1.0f;
     private Task move;
     private LayerMask mask;
+
+    NeedsCompontent need;
 
     //**** TASKS ****//
     // Check if energy level is too low
@@ -33,7 +36,7 @@ public class Worker : MonoBehaviour
     [Task]
     public bool NeedsEnergy()
     {
-        if (energy < 0)
+        if (need.energyLevel < 0)
         {
             return true;            
         }
@@ -49,17 +52,25 @@ public class Worker : MonoBehaviour
     [Task]
     void Move(string goal)
     {
-        if (goal == "Coffee")
-        {
-            Move(coffeeMachine);
-            isWorking = false;
-        }
-        else if (goal == "Workstation")
-        {
-            Move(workstation);
-            isWorking = true;
-        }
 
+        switch(goal){
+            case "Coffee":
+                Move(coffeeMachine);
+                isWorking = false;
+                break;
+            case "Workstation":
+                Move(workstation);
+                isWorking = true;
+                break;
+            case "Toilet":
+                Move(toilet);
+                isWorking = false;
+                break;
+            case "Sink":
+                Move(sink);
+                isWorking = false;
+                break;
+        }
 
         move = Task.current;
     }
@@ -70,13 +81,53 @@ public class Worker : MonoBehaviour
     {
         if (type == "Coffee")
         {
-            energy = 15.0f;
+            need.energyLevel += 15.0f;
         }
 
         arrived = false;
         Task.current.Succeed();
     }
 
+    /*--- Bathroom check ----*/
+    //If bladder is low enough, move to the toilet. Otherwise the task will fail
+    [Task]
+    public bool NeedBathroom() {
+        if (need.bladderLevel < 0.2f) { return true; }
+        else { return false; }
+    }
+   /* public void NeedBathroom()
+    {
+
+        if (need.bladderLevel > 0.3f)
+        {
+            Task.current.Fail();
+        }
+
+        else
+        {
+            Move("Toilet");
+            Task.current.Succeed();
+        }
+    }*/
+
+    //Use the bathroom; this will obv affect the bladder
+    [Task]
+    public void UseBathroom()
+    {
+     
+            need.bladderLevel = 1.0f;
+            Task.current.Succeed();
+
+    }
+
+    /*--- TASKS END ----*/
+
+
+    private void Awake()
+    {
+        need = GetComponent<NeedsCompontent>();
+       
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -98,7 +149,8 @@ public class Worker : MonoBehaviour
         occupation = Occupation();
 
         // Drain/Increase needs
-        energy -= Time.deltaTime * occupation * 0.3f;
+        //energy -= Time.deltaTime * occupation * 0.3f;
+        //bladder -= Time.deltaTime * 0.02f;
 
         IsAtGoal(agent.destination);
 

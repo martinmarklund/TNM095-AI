@@ -34,7 +34,7 @@ public class Worker_toilet : MonoBehaviour
         if (energy < 0)
         {
             return true;
-            Task.current.Succeed();
+            //Task.current.Succeed();
         }
         else
             return false;
@@ -43,7 +43,7 @@ public class Worker_toilet : MonoBehaviour
     [Task]
     public void NeedBathroom() {
 
-        if (bladder > 0.3f)
+        if (bladder < 0.2f)
         {
             Task.current.Fail();
         }
@@ -57,10 +57,8 @@ public class Worker_toilet : MonoBehaviour
     [Task]
     public void UseBathroom() {
 
-        if (arrived == true) {
             bladder = 1.0f;
             Task.current.Succeed();
-        }
        
     }
 
