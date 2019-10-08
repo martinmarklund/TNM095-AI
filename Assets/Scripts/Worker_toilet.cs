@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Panda;
-
+using UnityEngine.UI;
 public class Worker_toilet : MonoBehaviour
 {
 
@@ -22,6 +22,12 @@ public class Worker_toilet : MonoBehaviour
     public float bladder = 1.0f;
     public Task move;
 
+    // Thought related variables
+    public Transform thoughtPivot;
+    public RawImage thoughtBubble;
+    public Texture[] thoughts = new Texture[3]; // Coffee, Work, Toilet
+    
+
 
     //**** TASKS ****//
     // Check if energy level is too low
@@ -33,6 +39,7 @@ public class Worker_toilet : MonoBehaviour
     {
         if (energy < 0)
         {
+<<<<<<< HEAD
             return true;
             //Task.current.Succeed();
         }
@@ -63,10 +70,44 @@ public class Worker_toilet : MonoBehaviour
     }
 
     // Check if agent has arrived at current goal
+=======
+            Task.current.Succeed();
+            return true;
+        }
+        else
+            return false;
+    }
+
+    [Task]
+    public void NeedBathroom() {
+
+        if (bladder > 0.3f)
+        {
+            Task.current.Fail();
+        }
+
+        else {
+            Move("Toilet");
+            Task.current.Succeed();
+        }
+    }
+    //Use the bathroom, affect the bladder
+    [Task]
+    public void UseBathroom() {
+
+        if (arrived == true) {
+            bladder = 1.0f;
+            Task.current.Succeed();
+        }
+       
+    }
+
+    // Check if agent has arrived at current goal
     [Task]
     public bool arrived;
 
     // Behaviour tree calls this function to decide destination
+>>>>>>> 07735a9d89c910869bb377c0df503d2d35ee4bfe
     [Task]
     void Move(string goal)
     {
@@ -94,6 +135,7 @@ public class Worker_toilet : MonoBehaviour
             isWorking = false;
         }
 
+        UpdateThought(goal);
 
         move = Task.current;
     }
@@ -127,11 +169,13 @@ public class Worker_toilet : MonoBehaviour
         occupation = Occupation();
 
         // Drain/Increase needs
-        //energy -= Time.deltaTime * occupation * 0.3f;
+        energy -= Time.deltaTime * occupation * 0.3f;
         bladder -= Time.deltaTime * 0.02f;
 
         IsAtGoal(agent.destination);
 
+        // Update thought bubbles
+        UpdateThoughtPosition();
     }
 
     // True if agent is close enough to goal, otherwise false
@@ -187,6 +231,36 @@ public class Worker_toilet : MonoBehaviour
 
      }
      */
+
+    /// <summary>
+    /// Updates the position of the thought bubble so that it sticks to pivot point
+    /// </summary>
+     void UpdateThoughtPosition() {
+         Vector3 bubblePosition = Camera.main.WorldToScreenPoint(thoughtPivot.position);
+         thoughtBubble.transform.position = bubblePosition;
+     }
+
+    /// <summary>
+    /// Checks the current task of the agent and updates thought texture accordingly
+    /// </summary>
+     void UpdateThought(string goal) {
+         switch(goal)
+         {
+             case "Coffee":
+                thoughtBubble.texture = thoughts[0];
+                break;
+            case "Workstation":
+                thoughtBubble.texture = thoughts[1];
+                break;
+            case "Toilet":
+                thoughtBubble.texture = thoughts[2];
+                break;
+            case "Sink":    // Can be changed to individual bubble for "Sink"
+                thoughtBubble.texture = thoughts[2];
+                break;
+         } 
+         
+     }
 }
 
 

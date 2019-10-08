@@ -10,6 +10,7 @@ TagManager:
   - Workstation
   - CoffeMachine
   - PatrolPoint
+  - Door
   layers:
   - Default
   - TransparentFX

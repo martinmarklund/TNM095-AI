@@ -10,7 +10,7 @@ public class Boss : MonoBehaviour
 
     // Position related variables
     public Transform office;
-    public Vector3[] patrolPoints;  
+    private Vector3[] patrolPoints;  
 
     //Agent Related variables
     public NavMeshAgent agent;
@@ -23,7 +23,7 @@ public class Boss : MonoBehaviour
     private bool playerWasInControll;
 
     [Task]
-    public bool isNextPP; //If we have a next patrolpoint
+    private bool isNextPP; //If we have a next patrolpoint
 
     [Task]
     //If the player controls the boss
@@ -73,7 +73,7 @@ public class Boss : MonoBehaviour
     // True if agent is close enough to goal, otherwise false
     public void IsAtGoal()
     {        
-        if (!arrived && agent.remainingDistance < 0.1f)
+        if (!arrived && Vector3.Distance(agent.transform.position, agent.destination) < 2.0f  /*&& agent.remainingDistance < 0.1f*/)
         {                     
             move.Complete(true);
             arrived = true;
