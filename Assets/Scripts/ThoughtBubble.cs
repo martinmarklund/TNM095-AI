@@ -1,30 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ThoughtBubble : MonoBehaviour
 {
-    private Transform pivotPosition;
-    public Camera cam;
-    private float angle;
-
-    void Start() {
-        pivotPosition = transform;
-    }
-    // Update is called once per frame
-    private void Update() {
-        // Check the pivot point's rotation relative to camera view direction and update it accordingly
-        angle = Vector3.Angle(cam.transform.forward, pivotPosition.forward);
-        Rotate(angle);
+    public RawImage thoughtBubble;
+    public Texture[] thoughts = new Texture[3]; // Coffee, Work, Toilet
+    /// <summary>
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
+    /// </summary>
+    void Start()
+    {
+        thoughtBubble.texture = thoughts[Random.Range(0,3)];
     }
 
-    // Updates the rotation
-    private void Rotate(float diff) {
-        float xRot = pivotPosition.rotation.x;
-        
-        float zRot = pivotPosition.rotation.z;
-
-        pivotPosition.eulerAngles = new Vector3(xRot,90+diff,zRot);
-        
+    /// <summary>
+    /// Update is called every frame, if the MonoBehaviour is enabled.
+    /// </summary>
+    void Update() {
+        Vector3 bubblePosition = Camera.main.WorldToScreenPoint(this.transform.position);
+        thoughtBubble.transform.position = bubblePosition;
     }
 }

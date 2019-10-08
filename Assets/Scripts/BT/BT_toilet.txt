@@ -1,0 +1,47 @@
+tree "Root"
+    fallback
+        tree("VisitBathroom")
+        tree("Work")
+        
+        tree("GetCoffe")
+        //while not NeedsEnergy 
+        //        tree "Work"
+        //tree "GetC∑offe"
+
+tree "VisitBathroom"
+    sequence
+        NeedBathroom()
+        UseBathroom()
+        Wait(2.0)
+        Move("Sink")
+        Wait(2.0)
+
+
+tree "Work" 
+    fallback
+        while isWorking
+            //Work
+            Succeed
+        tree "GoToWorkplace"
+        
+
+tree "GoToWorkplace"
+    sequence
+        Move("Workstation")
+        arrived //Check if there
+        //Function go to workplace
+        //Check if there
+
+tree "GetCoffe"
+    while NeedsEnergy 
+        sequence
+            tree "GoToMachine"      
+            tree "Drink"
+
+tree "GoToMachine"
+    sequence
+        Move("Coffee") //Function go to machine
+        arrived
+
+tree "Drink"
+    RefillEnergy("Coffee") //Function refill stamina
