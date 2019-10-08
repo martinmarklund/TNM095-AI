@@ -1,12 +1,11 @@
 tree "Root"
     fallback
+
         tree("VisitBathroom")
         tree("Work")
-        
         tree("GetCoffe")
-        //while not NeedsEnergy 
-        //        tree "Work"
-        //tree "GetC∑offe"
+
+       
 
 tree "VisitBathroom"
     sequence
