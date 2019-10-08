@@ -23,6 +23,9 @@ public class Worker : MonoBehaviour
     private Task move;
     private LayerMask mask;
 
+    private Transform[] coffeeMachines;
+    private Transform[] workStations;
+
     //**** TASKS ****//
     // Check if energy level is too low
     [Task]
@@ -84,6 +87,13 @@ public class Worker : MonoBehaviour
 		agent = GetComponent<NavMeshAgent>();
 		Move(workstation);
         mask = ~LayerMask.GetMask("Ignore Raycast");
+
+        GameObject[] cM = GameObject.FindGameObjectsWithTag("CoffeMachine");
+        coffeeMachines = new Transform[cM.Length];
+        for (int i = 0; i < cM.Length; i++)
+        {
+            coffeeMachines[i] = cM[i].transform;
+        }
     }
 
     private void FixedUpdate()
