@@ -1,12 +1,16 @@
 tree("Root")
-		fallback			
-			while not NeedsEnergy 
+	fallback	
+        while NeedBathroom
+            tree "VisitBathroom"		
+		while not NeedsEnergy 
+			tree "Work"
+		sequence
+			fallback
+				while not isBossNear
+					tree "GetCoffe"
 				tree "Work"
-			sequence
-				fallback
-					while not isBossNear
-						tree "GetCoffe"
-					tree "Work"
+         
+            
 			
 tree "Work"	
 	fallback
@@ -35,3 +39,11 @@ tree "GoToMachine"
 
 tree "Drink"
 	RefillEnergy("Coffee") //Function refill stamina
+
+tree "VisitBathroom"
+    sequence
+        Move("Toilet")
+        UseBathroom()
+        Wait(2.0)
+        Move("Sink")
+        Wait(2.0)

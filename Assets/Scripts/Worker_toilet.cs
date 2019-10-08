@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Panda;
-
+using UnityEngine.UI;
 public class Worker_toilet : MonoBehaviour
 {
 
@@ -22,6 +22,12 @@ public class Worker_toilet : MonoBehaviour
     public float bladder = 1.0f;
     public Task move;
 
+    // Thought related variables
+    public Transform thoughtPivot;
+    public RawImage thoughtBubble;
+    public Texture[] thoughts = new Texture[3]; // Coffee, Work, Toilet
+    
+
 
     //**** TASKS ****//
     // Check if energy level is too low
@@ -33,8 +39,8 @@ public class Worker_toilet : MonoBehaviour
     {
         if (energy < 0)
         {
+            //Task.current.Succeed();
             return true;
-            Task.current.Succeed();
         }
         else
             return false;
@@ -43,7 +49,7 @@ public class Worker_toilet : MonoBehaviour
     [Task]
     public void NeedBathroom() {
 
-        if (bladder > 0.3f)
+        if (bladder < 0.2f)
         {
             Task.current.Fail();
         }
@@ -57,12 +63,11 @@ public class Worker_toilet : MonoBehaviour
     [Task]
     public void UseBathroom() {
 
-        if (arrived == true) {
             bladder = 1.0f;
             Task.current.Succeed();
-        }
        
     }
+
 
     // Check if agent has arrived at current goal
     [Task]
@@ -96,6 +101,7 @@ public class Worker_toilet : MonoBehaviour
             isWorking = false;
         }
 
+        UpdateThought(goal);
 
         move = Task.current;
     }
@@ -129,11 +135,13 @@ public class Worker_toilet : MonoBehaviour
         occupation = Occupation();
 
         // Drain/Increase needs
-        //energy -= Time.deltaTime * occupation * 0.3f;
+        energy -= Time.deltaTime * occupation * 0.3f;
         bladder -= Time.deltaTime * 0.02f;
 
         IsAtGoal(agent.destination);
 
+        // Update thought bubbles
+        UpdateThoughtPosition();
     }
 
     // True if agent is close enough to goal, otherwise false
@@ -189,6 +197,36 @@ public class Worker_toilet : MonoBehaviour
 
      }
      */
+
+    /// <summary>
+    /// Updates the position of the thought bubble so that it sticks to pivot point
+    /// </summary>
+     void UpdateThoughtPosition() {
+         Vector3 bubblePosition = Camera.main.WorldToScreenPoint(thoughtPivot.position);
+         thoughtBubble.transform.position = bubblePosition;
+     }
+
+    /// <summary>
+    /// Checks the current task of the agent and updates thought texture accordingly
+    /// </summary>
+     void UpdateThought(string goal) {
+         switch(goal)
+         {
+             case "Coffee":
+                thoughtBubble.texture = thoughts[0];
+                break;
+            case "Workstation":
+                thoughtBubble.texture = thoughts[1];
+                break;
+            case "Toilet":
+                thoughtBubble.texture = thoughts[2];
+                break;
+            case "Sink":    // Can be changed to individual bubble for "Sink"
+                thoughtBubble.texture = thoughts[2];
+                break;
+         } 
+         
+     }
 }
 
 
