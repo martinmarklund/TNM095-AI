@@ -10,7 +10,7 @@ public class Boss : MonoBehaviour
 
     // Position related variables
     public Transform office;
-    public Vector3[] patrolPoints;  
+    private Vector3[] patrolPoints;  
 
     //Agent Related variables
     public NavMeshAgent agent;
