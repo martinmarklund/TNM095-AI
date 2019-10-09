@@ -4,43 +4,45 @@ using UnityEngine;
 
 public struct UseArea {
     
-    public Transform transform;
+    public Transform areaTransform;
     public bool inUse {
         get
         {
             // If no workers are standing at the use area, return false
             foreach(GameObject worker in GameManager.workers) {
-                if(Vector3.Distance(transform.position, worker.transform.position) > 1)
-                    return false;
+                if(Vector3.Distance(areaTransform.position, worker.transform.position) < 1)
+                {
+                    return true;
+                } 
             }
-            return true;
+            return false;
         }
     }
     
     public UseArea(Transform t)
     {
-        transform = t;
+        areaTransform = t;
     }
     
 }
 public struct QueueArea {
 
-    public Transform transform;
+    public Transform areaTransform;
     public bool inUse {
         get
         {
             // If no workers are standing at the queue area, return false
             foreach(GameObject worker in GameManager.workers) {
-                if(Vector3.Distance(transform.position, worker.transform.position) > 0.2)
-                    return false;
+                if(Vector3.Distance(areaTransform.position, worker.transform.position) < 1)
+                    return true;
             }
-            return true;
+            return false;
         }
     }
 
     public QueueArea(Transform t)
     {
-        transform = t;
+        areaTransform = t;
     }
 
 }
@@ -76,6 +78,25 @@ public class DestinationProperties : MonoBehaviour
     }
 
     /// <summary>
+    /// Return index of first free use area, if no queue areas are free, return -1
+    /// </summary>
+    public int GetFirstFreeUseArea() {
+        int index = -1;
+        if(!isFull())
+        {
+            for(int i = 0; i < useAreas.Count; i++)
+            {
+                if(!useAreas[i].inUse)
+                {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
+    /// <summary>
     /// Loop through all queue areas and check if number of users >= qLimit
     /// </summary>
     public bool isQueueFull() {
@@ -100,10 +121,12 @@ public class DestinationProperties : MonoBehaviour
             for(int i = 0; i < queueAreas.Count; i++)
             {
                 if(!queueAreas[i].inUse)
+                {
                     index = i;
+                    break;
+                }
             }
         }
-          
         return index;
     }
 
@@ -129,9 +152,13 @@ public class DestinationProperties : MonoBehaviour
     /// </summary>
     void Update()
     {
+        // Shows editor whether occupied and queueable or not
         occupied = isFull();
         queueable = !isQueueFull();
+
+        /*** Use this if you want to debug queue area occupation ***
         for(int i = 0; i < queueAreas.Count; i++)
             Debug.Log("Spot: " + i + " is occupied = " + queueAreas[i].inUse);
+        */
     }
 }

@@ -96,14 +96,16 @@ public class Worker_toilet : MonoBehaviour
             // Check if toilet is not occupied
             if(!toilet.GetComponent<DestinationProperties>().isFull())
             {
-                Move(toilet.GetComponent<DestinationProperties>().useAreas[0].transform);
+                int useIndex = toilet.GetComponent<DestinationProperties>().GetFirstFreeUseArea();
+                Move(toilet.GetComponent<DestinationProperties>().useAreas[useIndex].areaTransform);
                 isWorking = false;
             }
             // Otherwise check if queue is not full
             else if(!toilet.GetComponent<DestinationProperties>().isQueueFull())
             {
                 int queuIndex = toilet.GetComponent<DestinationProperties>().GetFirstFreeQueueArea();
-                Move(toilet.GetComponent<DestinationProperties>().queueAreas[queuIndex].transform);
+                Debug.Log(queuIndex);
+                Move(toilet.GetComponent<DestinationProperties>().queueAreas[queuIndex].areaTransform);
             }
         }
 
