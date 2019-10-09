@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Panda;
+using System;
 
 public class Worker : MonoBehaviour
 {
-
-    
     // Position related variables
     private Vector3 agentDestination;
     public Transform coffeeMachine;
@@ -24,12 +23,10 @@ public class Worker : MonoBehaviour
     private Task move;
     private LayerMask mask;
 
-<<<<<<< HEAD
     NeedsCompontent need;
-=======
+    ThoughtBubble getThought;
     private Transform[] coffeeMachines;
     private Transform[] workStations;
->>>>>>> 07735a9d89c910869bb377c0df503d2d35ee4bfe
 
     //**** TASKS ****//
     // Check if energy level is too low
@@ -87,6 +84,7 @@ public class Worker : MonoBehaviour
         if (type == "Coffee")
         {
             need.energyLevel += 15.0f;
+            need.bladderLevel -= 0.1f;
         }
 
         arrived = false;
@@ -100,34 +98,24 @@ public class Worker : MonoBehaviour
         if (need.bladderLevel < 0.2f) { return true; }
         else { return false; }
     }
-   /* public void NeedBathroom()
+
+    [Task]
+    public bool NotClean()
     {
-
-        if (need.bladderLevel > 0.3f)
-        {
-            Task.current.Fail();
-        }
-
-        else
-        {
-            Move("Toilet");
-            Task.current.Succeed();
-        }
-    }*/
+        if (need.hygieneLevel < 8.0f) { return true; }
+        else { return false; }
+    }
 
     //Use the bathroom; this will obv affect the bladder
     [Task]
-    public void UseBathroom()
+    public void Bathroom()
     {
-     
-            need.bladderLevel = 1.0f;
-            Task.current.Succeed();
-
+        if (NotClean()) { need.hygieneLevel = 10.0f; }
+        need.bladderLevel = 1.0f;
     }
-
     /*--- TASKS END ----*/
 
-
+   
     private void Awake()
     {
         need = GetComponent<NeedsCompontent>();
