@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.AI;
 using Panda;
 using System;
@@ -8,12 +9,16 @@ using System;
 public class Worker : MonoBehaviour
 {
     // Position related variables
-    private Vector3 agentDestination;
-    public Transform coffeeMachine;
+    //private Vector3 agentDestination;
+    //public Transform coffeeMachine;
 	public Transform workstation;
-    public Transform boss;
+    private Transform boss;
     public Transform toilet;
     public Transform sink;
+
+    private Transform[] coffeeMachines;
+    private Transform[] workStations;
+    private Transform[] toiletPosistions;
 
     // Agent related variables
     public NavMeshAgent agent;
@@ -23,10 +28,19 @@ public class Worker : MonoBehaviour
     private Task move;
     private LayerMask mask;
 
+
     NeedsCompontent need;
     ThoughtBubble getThought;
     private Transform[] coffeeMachines;
     private Transform[] workStations;
+
+    NeedsCompontent need;
+
+    // Thought related variables
+    private Transform thoughtPivot;
+    private RawImage thoughtBubble;
+    public Texture[] thoughts = new Texture[3]; // Coffee, Work, Toilet
+
 
     //**** TASKS ****//
     // Check if energy level is too low
@@ -40,24 +54,24 @@ public class Worker : MonoBehaviour
     {
         if (need.energyLevel < 0)
         {
-            return true;            
+            return true;
         }
         else
             return false;
     }
-    
+
     // Check if agent has arrived at current goal
     [Task]
     public bool arrived;
-    
+
+
     // Behaviour tree calls this function to decide destination
     [Task]
     void Move(string goal)
     {
-
         switch(goal){
             case "Coffee":
-                Move(coffeeMachine);
+                Move(coffeeMachines[FindClosest(coffeeMachines)]);
                 isWorking = false;
                 break;
             case "Workstation":
@@ -74,6 +88,7 @@ public class Worker : MonoBehaviour
                 break;
         }
 
+        UpdateThought(goal);
         move = Task.current;
     }
 
@@ -115,19 +130,23 @@ public class Worker : MonoBehaviour
     }
     /*--- TASKS END ----*/
 
-   
+
     private void Awake()
     {
         need = GetComponent<NeedsCompontent>();
-       
+
     }
 
     // Start is called before the first frame update
     void Start()
 	{
 		agent = GetComponent<NavMeshAgent>();
-		Move(workstation);
+
         mask = ~LayerMask.GetMask("Ignore Raycast");
+
+        thoughtPivot = gameObject.transform.GetChild(0);
+        thoughtBubble = gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<RawImage>();
+        boss = GameObject.FindGameObjectsWithTag("Boss")[0].transform;
 
         GameObject[] cM = GameObject.FindGameObjectsWithTag("CoffeMachine");
         coffeeMachines = new Transform[cM.Length];
@@ -135,6 +154,23 @@ public class Worker : MonoBehaviour
         {
             coffeeMachines[i] = cM[i].transform;
         }
+
+        cM = GameObject.FindGameObjectsWithTag("Workstation");
+        workStations = new Transform[cM.Length];
+        for (int i = 0; i < cM.Length; i++)
+        {
+            workStations[i] = cM[i].transform;
+        }
+
+        cM = GameObject.FindGameObjectsWithTag("Toilet");
+        toiletPosistions = new Transform[cM.Length];
+        for (int i = 0; i < cM.Length; i++)
+        {
+            toiletPosistions[i] = cM[i].transform;
+        }
+
+        workstation = workStations[(int)(Random.value * (workStations.Length))];
+        Move(workstation);
     }
 
     private void FixedUpdate()
@@ -153,6 +189,7 @@ public class Worker : MonoBehaviour
         //bladder -= Time.deltaTime * 0.02f;
 
         IsAtGoal(agent.destination);
+        UpdateThoughtPosition();
 
 	}
 
@@ -199,6 +236,46 @@ public class Worker : MonoBehaviour
         }
     }
 
+    public int FindClosest(Transform[] transArr)
+    {
+        agent.ResetPath();
+        int chosen = 0;
+        NavMeshPath path = new NavMeshPath();
+        float minPathLength = 99999.0f;
+
+        //Loop trough all pp
+        for (int i = 0; i < transArr.Length; i++)
+        {
+            path.ClearCorners();
+            float pathL = 0.0f;
+            //Calculate the path
+            agent.CalculatePath(GetObjectFront(transArr[i]), path);
+
+            //If path is valid
+            if (true || path.status == NavMeshPathStatus.PathComplete)
+            {
+                //Calc the leght of the path
+                for (int j = 1; j < path.corners.Length; ++j)
+                {
+                    pathL += Vector3.Distance(path.corners[j - 1], path.corners[j]);
+                }
+                //If this path is shorter than the current min set it as the current destiantion
+                if (pathL < minPathLength)
+                {
+                    minPathLength = pathL;
+                    chosen = i;
+                }
+            }
+        }
+
+        return chosen;
+    }
+
+    Vector3 GetObjectFront(Transform obj)
+    {
+        return obj.position + obj.forward;
+    }
+
     // Overloaded move that is used within script to assign destination
     void Move(Transform goal)
     {
@@ -216,7 +293,39 @@ public class Worker : MonoBehaviour
             return 1.0f;
     }
 
-    /* 
+    /// <summary>
+    /// Updates the position of the thought bubble so that it sticks to pivot point
+    /// </summary>
+    void UpdateThoughtPosition()
+    {
+        Vector3 bubblePosition = Camera.main.WorldToScreenPoint(thoughtPivot.position);
+        thoughtBubble.transform.position = bubblePosition;
+    }
+
+    /// <summary>
+    /// Checks the current task of the agent and updates thought texture accordingly
+    /// </summary>
+    void UpdateThought(string goal)
+    {
+        switch (goal)
+        {
+            case "Coffee":
+                thoughtBubble.texture = thoughts[0];
+                break;
+            case "Workstation":
+                thoughtBubble.texture = thoughts[1];
+                break;
+            case "Toilet":
+                thoughtBubble.texture = thoughts[2];
+                break;
+            case "Sink":    // Can be changed to individual bubble for "Sink"
+                thoughtBubble.texture = thoughts[2];
+                break;
+        }
+
+    }
+
+    /*
     void CheckNeeds()
          {
              if (energy < 5)
@@ -240,5 +349,3 @@ public class Worker : MonoBehaviour
      }
      */
 }
-
-

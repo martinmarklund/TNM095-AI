@@ -12,7 +12,7 @@ public class Worker_toilet : MonoBehaviour
     private Vector3 agentDestination;
     public Transform coffeeMachine;
     public Transform workstation;
-    public Transform toilet;
+    public GameObject toilet;
     public Transform sink;
 
     // Agent related variables
@@ -39,9 +39,8 @@ public class Worker_toilet : MonoBehaviour
     {
         if (energy < 0)
         {
-<<<<<<< HEAD
-            return true;
             //Task.current.Succeed();
+            return true;
         }
         else
             return false;
@@ -69,45 +68,12 @@ public class Worker_toilet : MonoBehaviour
        
     }
 
-    // Check if agent has arrived at current goal
-=======
-            Task.current.Succeed();
-            return true;
-        }
-        else
-            return false;
-    }
-
-    [Task]
-    public void NeedBathroom() {
-
-        if (bladder > 0.3f)
-        {
-            Task.current.Fail();
-        }
-
-        else {
-            Move("Toilet");
-            Task.current.Succeed();
-        }
-    }
-    //Use the bathroom, affect the bladder
-    [Task]
-    public void UseBathroom() {
-
-        if (arrived == true) {
-            bladder = 1.0f;
-            Task.current.Succeed();
-        }
-       
-    }
 
     // Check if agent has arrived at current goal
     [Task]
     public bool arrived;
 
     // Behaviour tree calls this function to decide destination
->>>>>>> 07735a9d89c910869bb377c0df503d2d35ee4bfe
     [Task]
     void Move(string goal)
     {
@@ -125,9 +91,21 @@ public class Worker_toilet : MonoBehaviour
         }
 
         else if (goal == "Toilet")
-        {
-            Move(toilet);
-            isWorking = false;
+        {   
+            // Check if toilet is not occupied
+            if(!toilet.GetComponent<DestinationProperties>().isFull())
+            {
+                int useIndex = toilet.GetComponent<DestinationProperties>().GetFirstFreeUseArea();
+                Move(toilet.GetComponent<DestinationProperties>().useAreas[useIndex].areaTransform);
+                isWorking = false;
+            }
+            // Otherwise check if queue is not full
+            else if(!toilet.GetComponent<DestinationProperties>().isQueueFull())
+            {
+                int queuIndex = toilet.GetComponent<DestinationProperties>().GetFirstFreeQueueArea();
+                Debug.Log(queuIndex);
+                Move(toilet.GetComponent<DestinationProperties>().queueAreas[queuIndex].areaTransform);
+            }
         }
 
         else if (goal == "Sink") {

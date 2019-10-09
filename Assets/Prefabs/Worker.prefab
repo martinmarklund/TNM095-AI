@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 343481108}
   - component: {fileID: 343481107}
   - component: {fileID: 343481106}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 980391494}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: ThoughtPivot
   m_TagString: Untagged
   m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
@@ -140,9 +140,9 @@ GameObject:
   - component: {fileID: 1804728038}
   - component: {fileID: 1804728040}
   - component: {fileID: 1804728039}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Thought
-  m_TagString: Untagged
+  m_TagString: Thought
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -213,10 +213,11 @@ GameObject:
   - component: {fileID: 8650233792231974900}
   - component: {fileID: 1539056449}
   - component: {fileID: 2449185672321347018}
-  - component: {fileID: 1760598955}
-  m_Layer: 0
+  - component: {fileID: 5806156425007115123}
+  - component: {fileID: 3915575238555008728}
+  m_Layer: 2
   m_Name: Worker
-  m_TagString: Untagged
+  m_TagString: Worker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
   m_StaticEditorFlags: 0
@@ -332,7 +333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scripts:
-  - {fileID: 4900000, guid: de2e12ad7766e4f90b1f811382fc69ba, type: 3}
+  - {fileID: 4900000, guid: c74b7ebe1fba8f342bf151460aecc06a, type: 3}
   autoReset: 1
   tickOn: 0
   sourceInfos:
@@ -341,7 +342,7 @@ MonoBehaviour:
     breakPointStatuses: 
     collapsedLines: 
     btScript: 
---- !u!114 &1760598955
+--- !u!114 &5806156425007115123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -350,22 +351,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 6736474755800678695}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 461408d39d5e745d0b111afb6a1631b7, type: 3}
+  m_Script: {fileID: 11500000, guid: 633e46161921e410c94171670e8ce0cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coffeeMachine: {fileID: 0}
   workstation: {fileID: 0}
   toilet: {fileID: 0}
   sink: {fileID: 0}
-  agent: {fileID: 0}
-  energy: 5
+  agent: {fileID: 1539056449}
   occupation: 1
-  bladder: 1
   thoughtPivot: {fileID: 0}
-  thoughtBubble: {fileID: 1804728039}
+  thoughtBubble: {fileID: 0}
   thoughts:
   - {fileID: 2800000, guid: 7a35453144aca1740a89d7611940aaad, type: 3}
   - {fileID: 2800000, guid: d4c18d52e21ec1a428bbaf6f34fbb0d0, type: 3}
   - {fileID: 2800000, guid: 018641eed928087459f9738e3ca513ef, type: 3}
   isWorking: 0
+  isBossNear: 0
   arrived: 0
+--- !u!114 &3915575238555008728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6736474755800678695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c0c0d3bbe6a64392aa9877de97eeae5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  energyLevel: 0
+  bladderLevel: 0

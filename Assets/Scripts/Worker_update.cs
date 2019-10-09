@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Panda;
 
-public class Worker : MonoBehaviour
+public class Worker_update : MonoBehaviour
 {
 
     
