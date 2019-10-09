@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 7525049104255006581}
   - component: {fileID: 2365737343159899698}
   - component: {fileID: 5213682025756190796}
+  - component: {fileID: 1049302980}
   m_Layer: 2
   m_Name: CoffeeMachine
   m_TagString: CoffeMachine
@@ -148,7 +149,7 @@ Transform:
   m_GameObject: {fileID: 7685952018171394515}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -10.28, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children:
   - {fileID: 474676237}
   - {fileID: 244347883}

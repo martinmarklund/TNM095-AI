@@ -70,7 +70,7 @@ public class Worker : MonoBehaviour
                 isWorking = false;
                 break;
             case "Workstation":
-                Move(workstation);
+                Move(workstation);                
                 isWorking = true;
                 break;
             case "Toilet":
@@ -144,7 +144,7 @@ public class Worker : MonoBehaviour
     void Start()
 	{
 		agent = GetComponent<NavMeshAgent>();
-		Move(workstation);
+		
         mask = ~LayerMask.GetMask("Ignore Raycast");
 
         thoughtPivot = gameObject.transform.GetChild(0);
@@ -171,6 +171,9 @@ public class Worker : MonoBehaviour
         {
             toiletPosistions[i] = cM[i].transform;
         }
+
+        workstation = workStations[(int)(Random.value * (workStations.Length))];
+        Move(workstation);
     }
 
     private void FixedUpdate()
