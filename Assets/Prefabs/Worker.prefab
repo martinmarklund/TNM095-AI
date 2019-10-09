@@ -359,6 +359,12 @@ MonoBehaviour:
   sink: {fileID: 0}
   agent: {fileID: 1539056449}
   occupation: 1
+  thoughtPivot: {fileID: 0}
+  thoughtBubble: {fileID: 0}
+  thoughts:
+  - {fileID: 2800000, guid: 7a35453144aca1740a89d7611940aaad, type: 3}
+  - {fileID: 2800000, guid: d4c18d52e21ec1a428bbaf6f34fbb0d0, type: 3}
+  - {fileID: 2800000, guid: 018641eed928087459f9738e3ca513ef, type: 3}
   isWorking: 0
   isBossNear: 0
   arrived: 0
