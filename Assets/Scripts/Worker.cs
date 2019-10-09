@@ -34,7 +34,7 @@ public class Worker : MonoBehaviour
     // Thought related variables
     private Transform thoughtPivot;
     private RawImage thoughtBubble;
-    private Texture[] thoughts = new Texture[3]; // Coffee, Work, Toilet
+    public Texture[] thoughts = new Texture[3]; // Coffee, Work, Toilet
 
 
     //**** TASKS ****//
@@ -83,6 +83,7 @@ public class Worker : MonoBehaviour
                 break;
         }
 
+        UpdateThought(goal);
         move = Task.current;
     }    
 
