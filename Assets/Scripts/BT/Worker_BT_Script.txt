@@ -22,14 +22,18 @@ tree "Work"
 
 tree "GoToWorkplace"
 	sequence
-		Move("Workstation")
+		Move("Workstation")		
 		arrived //Check if there
 		//Function go to workplace
 		//Check if there
 
 tree "GetCoffe"
 	sequence
-		tree "GoToMachine"		
+		tree "GoToMachine"	
+		mute
+			repeat 
+				not tree "QueueTree"			
+		MoveToUse()
 		tree "Drink"
 
 tree "GoToMachine"
@@ -38,12 +42,41 @@ tree "GoToMachine"
 		arrived
 
 tree "Drink"
-	RefillEnergy("Coffee") //Function refill stamina
+	sequence
+		Wait(1000)
+		RefillEnergy("Coffee") //Function refill stamina
 
 tree "VisitBathroom"
-    sequence
-        Move("Toilet")
-        UseBathroom()
-        Wait(2.0)
-        Move("Sink")
-        Wait(2.0)
+	sequence
+		Move("Toilet")	
+		UseBathroom()
+		Wait(2.0)
+		Move("Sink")
+		Wait(2.0)
+
+tree "QueueTree"
+	fallback
+		sequence
+			IsFirstinLine()
+			not IsOccupied()
+		fallback
+			while 
+				not IsQueueFull()
+				sequence
+					Queue()
+					while 
+						queueing
+						fallback
+							sequence
+								not IsFirstinLine()
+								repeat
+									not IsNextFree()									
+							sequence
+								not IsOccupied()
+								Stopqueueing()
+
+			sequence
+				//move to new findNewSjhit *
+				Fail
+
+	
