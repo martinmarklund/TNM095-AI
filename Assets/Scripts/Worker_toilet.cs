@@ -12,7 +12,7 @@ public class Worker_toilet : MonoBehaviour
     private Vector3 agentDestination;
     public Transform coffeeMachine;
     public Transform workstation;
-    public Transform toilet;
+    public GameObject toilet;
     public Transform sink;
 
     // Agent related variables
@@ -91,9 +91,21 @@ public class Worker_toilet : MonoBehaviour
         }
 
         else if (goal == "Toilet")
-        {
-            Move(toilet);
-            isWorking = false;
+        {   
+            // Check if toilet is not occupied
+            if(!toilet.GetComponent<DestinationProperties>().isFull())
+            {
+                int useIndex = toilet.GetComponent<DestinationProperties>().GetFirstFreeUseArea();
+                Move(toilet.GetComponent<DestinationProperties>().useAreas[useIndex].areaTransform);
+                isWorking = false;
+            }
+            // Otherwise check if queue is not full
+            else if(!toilet.GetComponent<DestinationProperties>().isQueueFull())
+            {
+                int queuIndex = toilet.GetComponent<DestinationProperties>().GetFirstFreeQueueArea();
+                Debug.Log(queuIndex);
+                Move(toilet.GetComponent<DestinationProperties>().queueAreas[queuIndex].areaTransform);
+            }
         }
 
         else if (goal == "Sink") {
