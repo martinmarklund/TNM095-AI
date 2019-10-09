@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 7525049104255006581}
   - component: {fileID: 2365737343159899698}
   - component: {fileID: 5213682025756190796}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: CoffeeMachine
-  m_TagString: Untagged
+  m_TagString: CoffeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
