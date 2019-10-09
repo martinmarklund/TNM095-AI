@@ -11,6 +11,8 @@ TagManager:
   - CoffeMachine
   - PatrolPoint
   - Door
+  - Toilet
+  - Thought
   layers:
   - Default
   - TransparentFX

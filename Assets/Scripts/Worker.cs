@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.AI;
 using Panda;
 
@@ -9,12 +10,16 @@ public class Worker : MonoBehaviour
 
     
     // Position related variables
-    private Vector3 agentDestination;
-    public Transform coffeeMachine;
+    //private Vector3 agentDestination;
+    //public Transform coffeeMachine;
 	public Transform workstation;
-    public Transform boss;
+    private Transform boss;
     public Transform toilet;
     public Transform sink;
+
+    private Transform[] coffeeMachines;
+    private Transform[] workStations;
+    private Transform[] toiletPosistions;
 
     // Agent related variables
     public NavMeshAgent agent;
@@ -24,10 +29,12 @@ public class Worker : MonoBehaviour
     private Task move;
     private LayerMask mask;
 
-    NeedsCompontent need;
+    NeedsCompontent need;    
 
-    private Transform[] coffeeMachines;
-    private Transform[] workStations;    
+    // Thought related variables
+    private Transform thoughtPivot;
+    private RawImage thoughtBubble;
+    private Texture[] thoughts = new Texture[3]; // Coffee, Work, Toilet
 
 
     //**** TASKS ****//
@@ -140,6 +147,10 @@ public class Worker : MonoBehaviour
 		Move(workstation);
         mask = ~LayerMask.GetMask("Ignore Raycast");
 
+        thoughtPivot = gameObject.transform.GetChild(0);
+        thoughtBubble = gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<RawImage>(); 
+        boss = GameObject.FindGameObjectsWithTag("Boss")[0].transform;
+
         GameObject[] cM = GameObject.FindGameObjectsWithTag("CoffeMachine");
         coffeeMachines = new Transform[cM.Length];
         for (int i = 0; i < cM.Length; i++)
@@ -152,6 +163,13 @@ public class Worker : MonoBehaviour
         for (int i = 0; i < cM.Length; i++)
         {
             workStations[i] = cM[i].transform;
+        }
+
+        cM = GameObject.FindGameObjectsWithTag("Toilet");
+        toiletPosistions = new Transform[cM.Length];
+        for (int i = 0; i < cM.Length; i++)
+        {
+            toiletPosistions[i] = cM[i].transform;
         }
     }
 
@@ -171,6 +189,7 @@ public class Worker : MonoBehaviour
         //bladder -= Time.deltaTime * 0.02f;
 
         IsAtGoal(agent.destination);
+        UpdateThoughtPosition();
 
 	}
 
@@ -272,6 +291,38 @@ public class Worker : MonoBehaviour
             return 0.5f;
         else
             return 1.0f;
+    }
+
+    /// <summary>
+    /// Updates the position of the thought bubble so that it sticks to pivot point
+    /// </summary>
+    void UpdateThoughtPosition()
+    {
+        Vector3 bubblePosition = Camera.main.WorldToScreenPoint(thoughtPivot.position);
+        thoughtBubble.transform.position = bubblePosition;
+    }
+
+    /// <summary>
+    /// Checks the current task of the agent and updates thought texture accordingly
+    /// </summary>
+    void UpdateThought(string goal)
+    {
+        switch (goal)
+        {
+            case "Coffee":
+                thoughtBubble.texture = thoughts[0];
+                break;
+            case "Workstation":
+                thoughtBubble.texture = thoughts[1];
+                break;
+            case "Toilet":
+                thoughtBubble.texture = thoughts[2];
+                break;
+            case "Sink":    // Can be changed to individual bubble for "Sink"
+                thoughtBubble.texture = thoughts[2];
+                break;
+        }
+
     }
 
     /* 
