@@ -43,7 +43,7 @@ tree "GoToMachine"
 
 tree "Drink"
 	sequence
-		Wait(1000)
+		Wait(600)
 		RefillEnergy("Coffee") //Function refill stamina
 
 tree "VisitBathroom"
@@ -60,20 +60,22 @@ tree "QueueTree"
 			IsFirstinLine()
 			not IsOccupied()
 		fallback
-			while 
+			sequence 
 				not IsQueueFull()
 				sequence
 					Queue()
-					while 
-						queueing
-						fallback
-							sequence
-								not IsFirstinLine()
-								repeat
-									not IsNextFree()									
-							sequence
-								not IsOccupied()
-								Stopqueueing()
+					repeat 
+						sequence
+							queueing
+							mute
+								fallback
+									sequence
+										not IsFirstinLine()								
+										mute
+											IsNextFree()									
+									sequence
+										not IsOccupied()
+										Stopqueueing()
 
 			sequence
 				//move to new findNewSjhit *
