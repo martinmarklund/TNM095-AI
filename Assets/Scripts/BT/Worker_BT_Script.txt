@@ -23,7 +23,12 @@ tree "Work"
 tree "GoToWorkplace"
 	sequence
 		Move("Workstation")		
-		arrived //Check if there
+		mute
+			repeat 
+				not tree "QueueTree"
+		MoveToUse()
+		//arrived //Check if there
+		Wait(1000)
 		//Function go to workplace
 		//Check if there
 
@@ -57,7 +62,7 @@ tree "VisitBathroom"
 tree "QueueTree"
 	fallback
 		sequence
-			IsFirstinLine()
+			//IsFirstinLine()
 			not IsOccupied()
 		fallback
 			sequence 

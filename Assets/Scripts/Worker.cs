@@ -238,7 +238,8 @@ public class Worker : MonoBehaviour
             toiletPosistions[i] = gameObjs[i];
         }
 
-        workstation = workStations[0].transform;//workStations[(int)(Random.value * (workStations.Length))].transform;
+        workstation = workStations[(int)(Random.value * (workStations.Length))].transform;
+        targetObject = workstation.gameObject;
         Move(workstation);
     }
 
@@ -357,7 +358,7 @@ public class Worker : MonoBehaviour
     {
         arrived = false;        
         int firstFree = targetObject.GetComponent<DestinationProperties>().GetFirstFreeUseArea();
-        Debug.Log(firstFree);
+        //Debug.Log(firstFree);
         if(firstFree != -1)
         {
             move = Task.current;
