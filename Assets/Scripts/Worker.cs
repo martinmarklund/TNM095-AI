@@ -14,12 +14,13 @@ public class Worker : MonoBehaviour
     //public Transform coffeeMachine;
 	private Transform workstation;
     private Transform boss;
-    public Transform toilet;
-    public Transform sink;
+    //public Transform toilet;
+    //public Transform sink;
 
     private GameObject[] coffeeMachines;
     private GameObject[] workStations;
     private GameObject[] toiletPosistions;
+    private GameObject[] sinks;
     private GameObject targetObject;
 
     // Agent related variables
@@ -32,6 +33,10 @@ public class Worker : MonoBehaviour
 
     NeedsCompontent need;
     public int queueNumber;
+    public int useAreaNumber;
+
+    public int workBench;
+    public bool haveAssignedWorkstation;
 
     // Thought related variables
     private Transform thoughtPivot;
@@ -41,6 +46,8 @@ public class Worker : MonoBehaviour
 
     //**** TASKS ****//
     // Check if energy level is too low
+    private bool isUsing;
+    public bool needsNewTarget;
     [Task]
     public bool isWorking;
     [Task]
@@ -61,7 +68,7 @@ public class Worker : MonoBehaviour
 
     [Task]
     public bool IsOccupied()
-    {       
+    {        
         return targetObject.GetComponent<DestinationProperties>().isFull();
     }
 
@@ -84,41 +91,14 @@ public class Worker : MonoBehaviour
     [Task]
     public bool arrived;
 
-    //toilet.GetComponent<DestinationProperties>().inUse;
-    
-    // Behaviour tree calls this function to decide destination
-    [Task]
-    void Move(string goal)
-    {
-        switch(goal){
-            case "Coffee":
-                targetObject = coffeeMachines[FindClosest(coffeeMachines)];
-                Move(targetObject.transform);
-                isWorking = false;
-                break;
-            case "Workstation":
-                Move(workstation);                
-                isWorking = true;
-                break;
-            case "Toilet":
-                Move(toilet);
-                isWorking = false;
-                break;
-            case "Sink":
-                Move(sink);
-                isWorking = false;
-                break;
-        }
-
-        UpdateThought(goal);
-        move = Task.current;
-    } 
+    //toilet.GetComponent<DestinationProperties>().inUse;       
     
     [Task]
     void Queue()
     {
         queueing = true;
         queueNumber = targetObject.GetComponent<DestinationProperties>().GetFirstFreeQueueArea();
+        targetObject.GetComponent<DestinationProperties>().BookQueueAreaState(queueNumber);
         Move(targetObject.GetComponent<DestinationProperties>().queueAreas[queueNumber].areaTransform);
         Task.current.Succeed();
     }
@@ -126,11 +106,14 @@ public class Worker : MonoBehaviour
     [Task]
     void IsNextFree()
     {
-        if (targetObject.GetComponent<DestinationProperties>().GetFirstFreeQueueArea() == queueNumber - 1)
+        //if (targetObject.GetComponent<DestinationProperties>().GetFirstFreeQueueArea() == queueNumber - 1)
+        if (!targetObject.GetComponent<DestinationProperties>().queueAreas[queueNumber - 1].inUse)
         {
             if(queueNumber > 0)
             {
-                queueNumber--;
+                queueNumber--;                
+                targetObject.GetComponent<DestinationProperties>().BookQueueAreaState(queueNumber);
+                targetObject.GetComponent<DestinationProperties>().ReleaseQueueAreaState(queueNumber + 1);
                 Move(targetObject.GetComponent<DestinationProperties>().queueAreas[queueNumber].areaTransform);
                 Task.current.Succeed();
             }
@@ -146,7 +129,11 @@ public class Worker : MonoBehaviour
     [Task]
     void Stopqueueing()
     {
-        queueing = false;
+        if (queueing)
+        {
+            queueing = false;
+            targetObject.GetComponent<DestinationProperties>().ReleaseQueueAreaState(queueNumber);
+        }        
         Task.current.Succeed();
     }
 
@@ -208,6 +195,9 @@ public class Worker : MonoBehaviour
     void Start()
 	{
         queueing = false;
+        haveAssignedWorkstation = false;
+        isWorking = false;
+        arrived = true;
         //queueNumber = -1;
         agent = GetComponent<NavMeshAgent>();
 		
@@ -238,9 +228,19 @@ public class Worker : MonoBehaviour
             toiletPosistions[i] = gameObjs[i];
         }
 
-        workstation = workStations[(int)(Random.value * (workStations.Length))].transform;
-        targetObject = workstation.gameObject;
-        Move(workstation);
+        gameObjs = GameObject.FindGameObjectsWithTag("Sink");
+        sinks = new GameObject[gameObjs.Length];
+        for (int i = 0; i < gameObjs.Length; i++)
+        {
+            sinks[i] = gameObjs[i];
+        }
+
+        workBench = (int)(Random.value * (workStations.Length));
+        //workstation = workStations[(int)(Random.value * (workStations.Length))].transform;
+        //workstation = workStations[0].transform;
+        //targetObject = workstation.gameObject;
+        //Move(workstation);
+        //Move("Workstation");        
     }
 
     private void FixedUpdate()
@@ -268,7 +268,7 @@ public class Worker : MonoBehaviour
 	{
 		if (!arrived && Vector3.Distance(agent.transform.position, goal) < 2.0f)
 		{
-            arrived = true;
+            arrived = true;            
             move.Complete(true);
         }
 //        else
@@ -306,6 +306,28 @@ public class Worker : MonoBehaviour
         }
     }
 
+    [Task]
+    public void NeedsNewTarget()
+    {
+        Debug.Log("need new");
+        needsNewTarget = true;
+        Task.current.Succeed();
+    }
+
+    [Task]
+    public void FindNewTarget()
+    {
+        if (needsNewTarget)
+        {
+            Debug.Log("trying to find new");
+            FindNextClosest();
+            Move(targetObject.transform);
+            move = Task.current;
+            needsNewTarget = false;
+        }
+
+    }
+
     public int FindClosest(GameObject[] gameArr)
     {
         agent.ResetPath();
@@ -340,10 +362,76 @@ public class Worker : MonoBehaviour
 
         return chosen;
     }
+    
+    public int FindNextClosest()
+    {        
+        GameObject[] gameArr = null;
+        agent.ResetPath();
+        int chosen = 0;
+        NavMeshPath path = new NavMeshPath();
+        float minPathLength = 99999.0f;
+
+        switch (targetObject.tag)
+        {
+            case "CoffeMachine":
+                gameArr = coffeeMachines;
+                break;
+            case "Workstation":
+                gameArr = workStations;
+                chosen = (int)(Random.value * (workStations.Length));
+                minPathLength = -1;
+                //workStations[(int))].transform;
+                break;
+            case "Toilet": //TODO not implemented yet
+                gameArr = toiletPosistions;
+                break;
+            case "Sink": //TODO not implemented yet
+                gameArr = sinks;
+                break;
+        }            
+
+        //Loop trough all objects
+        for (int i = 0; i < gameArr.Length; i++)
+        {
+            if (gameArr[i].transform != targetObject.transform)
+            {
+                path.ClearCorners();
+                float pathL = 0.0f;
+                //Calculate the path            
+                agent.CalculatePath(GetObjectFront(gameArr[i].transform), path);
+
+                //If path is valid
+                if (true || path.status == NavMeshPathStatus.PathComplete)
+                {
+                    //Calc the leght of the path            
+                    for (int j = 1; j < path.corners.Length; ++j)
+                    {
+                        pathL += Vector3.Distance(path.corners[j - 1], path.corners[j]);
+                    }
+                    //If this path is shorter than the current min set it as the current destiantion
+                    if (pathL < minPathLength)
+                    {
+                        minPathLength = pathL;
+                        chosen = i;
+                    }
+                }
+            }            
+        }
+        targetObject = gameArr[chosen];
+        return chosen;
+    }
 
     Vector3 GetObjectFront(Transform obj)
     {        
         return obj.position + obj.forward;
+    }
+
+    [Task]
+    public void AssignWorkStation()
+    {
+        haveAssignedWorkstation = true;
+        workstation = targetObject.transform;
+        Task.current.Succeed();
     }
 
     // Overloaded move that is used within script to assign destination
@@ -353,16 +441,74 @@ public class Worker : MonoBehaviour
         agent.destination = goal.position;
     }
 
+    // Behaviour tree calls this function to decide destination
+    [Task]
+    void Move(string goal)
+    {
+        if (isUsing)
+        {           
+            targetObject.GetComponent<DestinationProperties>().ReleaseUseAreaState(useAreaNumber);
+            isUsing = false;
+        }
+        else if (queueing)
+        {            
+            targetObject.GetComponent<DestinationProperties>().ReleaseQueueAreaState(queueNumber);
+            queueing = false;
+        }
+
+        switch (goal)
+        {
+            case "Coffee":
+                targetObject = coffeeMachines[FindClosest(coffeeMachines)];
+                Move(targetObject.transform);
+                isWorking = false;
+                break;
+            case "Workstation":
+                if (haveAssignedWorkstation)
+                {
+                    targetObject = workstation.gameObject;
+                }
+                else
+                {
+                    targetObject = workStations[workBench];
+                }
+                //targetObject = workStations[(int)(Random.value * (workStations.Length))];
+                Move(targetObject.transform);
+                isWorking = true;
+                break;
+            case "Toilet":
+                targetObject = toiletPosistions[FindClosest(toiletPosistions)];
+                Move(targetObject.transform);
+                isWorking = false;
+                break;
+            case "Sink":
+                targetObject = sinks[FindClosest(sinks)];
+                Move(targetObject.transform);
+                isWorking = false;
+                break;
+        }
+
+        UpdateThought(goal);
+        move = Task.current;
+    }
+
     [Task]
     void MoveToUse()
     {
-        arrived = false;        
-        int firstFree = targetObject.GetComponent<DestinationProperties>().GetFirstFreeUseArea();
-        //Debug.Log(firstFree);
-        if(firstFree != -1)
+        if (!isUsing)
         {
-            move = Task.current;
-            agent.destination = targetObject.GetComponent<DestinationProperties>().useAreas[firstFree].areaTransform.position;
+            arrived = false;
+            int firstFree = targetObject.GetComponent<DestinationProperties>().GetFirstFreeUseArea();
+
+            //Debug.Log(firstFree);
+            if (firstFree != -1)
+            {
+                useAreaNumber = firstFree;
+                isUsing = true;
+                targetObject.GetComponent<DestinationProperties>().BookUseAreaState(useAreaNumber);
+                move = Task.current;
+                agent.destination = targetObject.GetComponent<DestinationProperties>().useAreas[useAreaNumber].areaTransform.position;
+            }
         }        
     }
 

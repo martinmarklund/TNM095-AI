@@ -74,8 +74,7 @@ public class Boss : MonoBehaviour
     public void IsAtGoal()
     {        
         if (!arrived && (Vector3.Distance(agent.transform.position, agent.destination) <= 2.0f))
-        {
-            Debug.Log("HEY");
+        {            
             move.Complete(true);            
             arrived = true;
             nextPP++;
