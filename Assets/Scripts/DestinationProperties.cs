@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct UseArea {
-    
+public class UseArea {
+
     public Transform areaTransform;
-    public bool inUse {
+    public bool inUse;        
+    /*public bool inUse {
         get
         {
             // If no workers are standing at the use area, return false
@@ -15,20 +16,35 @@ public struct UseArea {
                     return true;
                 } 
             }
-            return false;
+            return inUse;
         }
-    }
+        set(bool value)
+        {
+            inUse = value;
+        }
+    }*/
     
     public UseArea(Transform t)
     {
         areaTransform = t;
+        inUse = false;
     }
-    
+
+    public void Book()
+    {
+        this.inUse = true;        
+    }
+
+    public void Release()
+    {
+        inUse = false;
+    }
 }
-public struct QueueArea {
+public class QueueArea {
 
     public Transform areaTransform;
-    public bool inUse {
+    public bool inUse;
+    /*public bool inUse {
         get
         {
             // If no workers are standing at the queue area, return false
@@ -38,13 +54,23 @@ public struct QueueArea {
             }
             return false;
         }
-    }
+    }*/
 
     public QueueArea(Transform t)
     {
         areaTransform = t;
+        inUse = false;
     }
 
+    public void Book()
+    {
+        this.inUse = true;        
+    }
+
+    public void Release()
+    {
+        inUse = false;
+    }
 }
 
 public class DestinationProperties : MonoBehaviour
@@ -61,6 +87,7 @@ public class DestinationProperties : MonoBehaviour
     public List<QueueArea> queueAreas = new List<QueueArea> ();
 
     public bool queueable;  // Is the object queueable?
+    public bool[] queuePlaces;
     
     /// <summary>
     /// Loop through all use areas of the object and check if the number of users >= limit
@@ -76,6 +103,28 @@ public class DestinationProperties : MonoBehaviour
         }
         return users >= limit; // Return true if all spots are being used, false if not
     }
+
+    public void BookUseAreaState(int areaIdx)
+    {               
+        useAreas[areaIdx].Book();        
+    }
+
+    public void ReleaseUseAreaState(int areaIdx)
+    {
+        useAreas[areaIdx].Release();        
+    }
+
+    public void BookQueueAreaState(int areaIdx)
+    {
+        queueAreas[areaIdx].Book();
+    }
+
+    public void ReleaseQueueAreaState(int areaIdx)
+    {
+        queueAreas[areaIdx].Release();
+    }
+
+
 
     /// <summary>
     /// Return index of first free use area, if no queue areas are free, return -1
@@ -145,6 +194,8 @@ public class DestinationProperties : MonoBehaviour
         {
             queueAreas.Add(new QueueArea(queueAreasTransforms[i]));
         }
+
+        queuePlaces = new bool[queueAreasTransforms.Length];
     }
 
     /// <summary>
@@ -160,5 +211,10 @@ public class DestinationProperties : MonoBehaviour
         for(int i = 0; i < queueAreas.Count; i++)
             Debug.Log("Spot: " + i + " is occupied = " + queueAreas[i].inUse);
         */
+
+        for (int i = 0; i < queueAreasTransforms.Length; i++)
+        {
+            queuePlaces[i] = queueAreas[i].inUse;
+        }
     }
 }
