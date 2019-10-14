@@ -16,25 +16,21 @@ public class Worker : MonoBehaviour
     public Transform toilet;
     public Transform sink;
 
+    private int totalWork = 1;
+
     private Transform[] coffeeMachines;
     private Transform[] workStations;
     private Transform[] toiletPosistions;
 
     // Agent related variables
     public NavMeshAgent agent;
-    //public float energy = 5.0f;
     public float occupation = 1.0f;
-    //public float bladder = 1.0f;
     private Task move;
     private LayerMask mask;
 
 
     NeedsCompontent need;
-    ThoughtBubble getThought;
-    private Transform[] coffeeMachines;
-    private Transform[] workStations;
-
-    NeedsCompontent need;
+    //ThoughtBubble getThought;
 
     // Thought related variables
     private Transform thoughtPivot;
@@ -169,7 +165,7 @@ public class Worker : MonoBehaviour
             toiletPosistions[i] = cM[i].transform;
         }
 
-        workstation = workStations[(int)(Random.value * (workStations.Length))];
+        workstation = workStations[(int)(UnityEngine.Random.value * workStations.Length)];
         Move(workstation);
     }
 
@@ -325,27 +321,44 @@ public class Worker : MonoBehaviour
 
     }
 
-    /*
-    void CheckNeeds()
-         {
-             if (energy < 5)
-             {
-                 Move(workstation);
-             }
+    void WorkEfficiency() {
 
-             if (energy < 0)
-             {
-                 Move(coffee);
+        float energy = need.energyLevel;
+        do
+        {
+            if (energy < 100 && energy > 50)
+            {
+                doWork(4);
+                Debug.Log("Work4");
+            }
+            else if (energy < 50 && energy > 20)
+            {
+                doWork(3);
+                Debug.Log("Work3");
 
-                 if (isAtGoal(coffee))
-                 {
-                     energy = 5.0f;
-                 }
-             }
-         }
+            }
+            else if (energy < 20)
+            {
+                doWork(2);
+                Debug.Log("Work2");
 
-     void NeedCoffee() {
+            }
+            else if (energy < 5)
+            {
+                doWork(1);
+                Debug.Log("Work1");
 
-     }
-     */
+            }
+        } while (Math.Abs(energy) > 0.0f); { Debug.Log("death to all"); }
+
+    }
+
+    void doWork(int i) {
+
+        totalWork *= i / 100;
+        Debug.Log("Total work: " + totalWork);
+
+    }
+
+
 }

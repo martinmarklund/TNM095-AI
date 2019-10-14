@@ -6,15 +6,17 @@ using UnityEngine.AI;
 public class NeedsCompontent : MonoBehaviour
 {
 
-    public float energyLevel = 0.0f; 
-    public float bladderLevel = 0.0f;
+    public float energyLevel; 
+    public float bladderLevel;
+    public float hygieneLevel;
     //public float socialLevel;
 
 
     private void Awake()
     {
-        energyLevel = Random.Range(5.0f, 15.0f);
+        energyLevel = Random.Range(90.0f, 100.0f);
         bladderLevel = Random.Range(0.5f, 1.0f);
+        hygieneLevel = Random.Range(9.0f, 10.0f);
     }
 
     // Start is called before the first frame update
@@ -30,8 +32,9 @@ public class NeedsCompontent : MonoBehaviour
     }
 
     void updateNeeds() {
-        energyLevel -= Time.deltaTime * Random.Range(0.0f, 1.0f);
+        energyLevel -= Time.deltaTime * Random.Range(0.0f, 5.0f);
         bladderLevel -= Time.deltaTime * Random.Range(0.0f, 0.02f);
+        hygieneLevel -= 0.005f;
     }
 
 

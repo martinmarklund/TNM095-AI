@@ -1,7 +1,7 @@
 tree("Root")
 	fallback	
-        while NeedBathroom
-            tree "VisitBathroom"		
+    while NeedBathroom
+        tree "VisitBathroom"
 		while not NeedsEnergy 
 			tree "Work"
 		sequence
@@ -9,14 +9,13 @@ tree("Root")
 				while not isBossNear
 					tree "GetCoffe"
 				tree "Work"
-         
-            
 			
 tree "Work"	
 	fallback
 		while isWorking
 			//Work
 			Succeed
+        tree "WorkEfficiency"
 		tree "GoToWorkplace"
 		
 
@@ -43,7 +42,14 @@ tree "Drink"
 tree "VisitBathroom"
     sequence
         Move("Toilet")
-        UseBathroom()
-        Wait(2.0)
+        Wait(5.0)
+        while NotClean
+            tree "WashHands"
+
+
+tree "WashHands"
+    sequence
         Move("Sink")
-        Wait(2.0)
+        Wait(5.0)
+        Bathroom()
+      
