@@ -15,7 +15,6 @@ tree "Work"
 		while isWorking
 			//Work
 			Succeed
-        tree "WorkEfficiency"
 		tree "GoToWorkplace"
 		
 
