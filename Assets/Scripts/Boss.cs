@@ -73,7 +73,7 @@ public class Boss : MonoBehaviour
     // True if agent is close enough to goal, otherwise false
     public void IsAtGoal()
     {        
-        if (!arrived && (Vector3.Distance(agent.transform.position, agent.destination) <= 2.0f))
+        if (!arrived && (Vector3.Distance(agent.transform.position, agent.destination) <= 3.0f))
         {            
             move.Complete(true);            
             arrived = true;
