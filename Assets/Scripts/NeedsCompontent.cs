@@ -9,8 +9,7 @@ public class NeedsCompontent : MonoBehaviour
     public float energyLevel; 
     public float bladderLevel;
     public float hygieneLevel;
-    //public float socialLevel;
-
+    public float socialLevel = 1.0f;
 
     private void Awake()
     {
@@ -36,6 +35,4 @@ public class NeedsCompontent : MonoBehaviour
         bladderLevel -= Time.deltaTime * Random.Range(0.0f, 0.02f);
         hygieneLevel -= 0.005f;
     }
-
-
 }
