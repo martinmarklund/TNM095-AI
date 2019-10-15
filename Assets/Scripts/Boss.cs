@@ -16,7 +16,7 @@ public class Boss : MonoBehaviour
     public NavMeshAgent agent;
     
     private float keyStrokeTimer;
-    private float speed;
+    public float speed;
     private Task move;
     public int nextPP;
     public bool arrived;        

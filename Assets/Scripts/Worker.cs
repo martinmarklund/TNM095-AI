@@ -199,7 +199,7 @@ public class Worker : MonoBehaviour
 
         if (i == 1) {
 
-            Debug.Log("energy:" + need.energyLevel);
+            //Debug.Log("energy:" + need.energyLevel);
 
             if (need.energyLevel < 100 && need.energyLevel > 50)
             {
@@ -336,7 +336,7 @@ public class Worker : MonoBehaviour
     [Task]
     public void NeedsNewTarget()
     {
-        Debug.Log("need new");
+        //Debug.Log("need new");
         needsNewTarget = true;
         Task.current.Succeed();
     }
@@ -346,7 +346,7 @@ public class Worker : MonoBehaviour
     {
         if (needsNewTarget)
         {
-            Debug.Log("trying to find new");
+           // Debug.Log("trying to find new");
             FindNextClosest();
             Move(targetObject.transform);
             move = Task.current;
@@ -585,7 +585,7 @@ public class Worker : MonoBehaviour
     void DoWork(float i) {
 
         totalWork += i*0.1f;
-        Debug.Log("Total work: " + totalWork);
+        //Debug.Log("Total work: " + totalWork);
 
     }
     
