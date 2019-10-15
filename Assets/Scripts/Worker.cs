@@ -157,20 +157,6 @@ public class Worker : MonoBehaviour
         if (need.bladderLevel < 0.2f) { return true; }
         else { return false; }
     }
-   /* public void NeedBathroom()
-    {
-
-        if (need.bladderLevel > 0.3f)
-        {
-            Task.current.Fail();
-        }
-
-        else
-        {
-            Move("Toilet");
-            Task.current.Succeed();
-        }
-    }*/
 
     //Use the bathroom; this will obv affect the bladder
     [Task]
@@ -553,30 +539,6 @@ public class Worker : MonoBehaviour
         }
 
     }
-
-    /* 
-    void CheckNeeds()
-         {
-             if (energy < 5)
-             {
-                 Move(workstation);
-             }
-
-             if (energy < 0)
-             {
-                 Move(coffee);
-
-                 if (isAtGoal(coffee))
-                 {
-                     energy = 5.0f;
-                 }
-             }
-         }
-
-     void NeedCoffee() {
-
-     }
-     */
 }
 
 

@@ -8,13 +8,16 @@ public class NeedsCompontent : MonoBehaviour
 
     public float energyLevel = 0.0f; 
     public float bladderLevel = 0.0f;
-    //public float socialLevel;
-
+    public float socialLevel = 1.0f;
+    private Worker worker;
 
     private void Awake()
     {
         energyLevel = Random.Range(5.0f, 15.0f);
         bladderLevel = Random.Range(0.5f, 1.0f);
+
+        worker = GetComponent<Worker>();
+
     }
 
     // Start is called before the first frame update
@@ -34,5 +37,7 @@ public class NeedsCompontent : MonoBehaviour
         bladderLevel -= Time.deltaTime * Random.Range(0.0f, 0.02f);
     }
 
+    void CheckCompability() {
 
+    }
 }

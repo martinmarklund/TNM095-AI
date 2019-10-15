@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
             
         if(workers == null)
             workers = GameObject.FindGameObjectsWithTag("Worker");
+
+        AssignTags();
     }
     /// <summary>
     /// Update is called once per frame
@@ -58,6 +60,25 @@ public class GameManager : MonoBehaviour
                 thoughtBubbles[i].SetActive(true);
             }
             thoughtsActive = true;
+        }
+    }
+
+    /// <summary>
+    /// Assigns either Boomer or Millenial tag to each worker
+    /// </summary>
+    void AssignTags() {
+        for(int i = 0; i < workers.Length; i++)
+        {
+            int rand = Random.Range(0,2);
+            switch (rand)
+            {
+                case 0:
+                    workers[i].tag = "Millenial";
+                    break;
+                case 1:
+                    workers[i].tag = "Boomer";
+                    break;
+            }
         }
     }
 }
