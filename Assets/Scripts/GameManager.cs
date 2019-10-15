@@ -25,9 +25,12 @@ public class GameManager : MonoBehaviour
         }
         if(thoughtBubbles == null)
             thoughtBubbles = GameObject.FindGameObjectsWithTag("Thought");
-            
-        if(workers == null)
+
+        if (workers == null)
+        {
             workers = GameObject.FindGameObjectsWithTag("Worker");
+        }
+   
     }
     /// <summary>
     /// Update is called once per frame
@@ -39,7 +42,6 @@ public class GameManager : MonoBehaviour
             ToggleThoughts();
         }
     }
-
     /// <summary>
     /// Toggles view of UI thoughts of workers
     /// </summary>

@@ -10,21 +10,33 @@ tree("Root")
 					tree "GetCoffe"
 				tree "Work"
 			
-tree "Work"	
-	fallback
-		while isWorking
-			//Work
-			Succeed
-        tree "WorkEfficiency"
-		tree "GoToWorkplace"
-		
+tree "Work" 
+        fallback
+            parallel
+                while IsWorking("Workstation")
+                    //Succeed
+                        sequence
+                            tree "WorkEfficiency"
+                            //not Succeed
+                        
+                tree "GoToWorkplace"
 
+
+tree "WorkEfficiency"
+        tree "CheckCoworker"
+
+tree "CheckCoworker"
+    sequence
+        //while not GoodMatch()
+            //WorkEfficiency(2)
+        WorkEfficiency(1)
+        
 tree "GoToWorkplace"
-	sequence
-		Move("Workstation")
-		arrived //Check if there
-		//Function go to workplace
-		//Check if there
+    sequence
+        Move("Workstation")
+        arrived //Check if there
+        //Function go to workplace
+        //Check if there
 
 tree "GetCoffe"
 	sequence

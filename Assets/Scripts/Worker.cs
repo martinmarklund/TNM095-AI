@@ -11,12 +11,12 @@ public class Worker : MonoBehaviour
     // Position related variables
     //private Vector3 agentDestination;
     //public Transform coffeeMachine;
-	public Transform workstation;
+    public Transform workstation;
     private Transform boss;
     public Transform toilet;
     public Transform sink;
 
-    private int totalWork = 1;
+    public float totalWork = 1.0f;
 
     private Transform[] coffeeMachines;
     private Transform[] workStations;
@@ -27,6 +27,7 @@ public class Worker : MonoBehaviour
     public float occupation = 1.0f;
     private Task move;
     private LayerMask mask;
+    public bool isWorking;
 
 
     NeedsCompontent need;
@@ -41,14 +42,34 @@ public class Worker : MonoBehaviour
     //**** TASKS ****//
     // Check if energy level is too low
     [Task]
-    public bool isWorking;
+    public bool IsWorking(string goal) {
+        switch (goal) {
+            case "Coffee":
+                return false;
+            case "Workstation":
+                return true;
+            case "Toilet":
+                return false;
+            case "Sink":
+                return false;
+        }
+
+        return true;
+    }
+
+
     [Task]
     public bool isBossNear;
 
     [Task]
+    public bool GoodMatch() {
+        return true;
+    }
+
+    [Task]
     public bool NeedsEnergy()
     {
-        if (need.energyLevel < 0)
+        if (need.energyLevel < 20.0f)
         {
             return true;
         }
@@ -68,19 +89,19 @@ public class Worker : MonoBehaviour
         switch(goal){
             case "Coffee":
                 Move(coffeeMachines[FindClosest(coffeeMachines)]);
-                isWorking = false;
+                isWorking = IsWorking(goal);
                 break;
             case "Workstation":
                 Move(workstation);
-                isWorking = true;
+                isWorking = IsWorking(goal);
                 break;
             case "Toilet":
                 Move(toilet);
-                isWorking = false;
+                isWorking = IsWorking(goal);
                 break;
             case "Sink":
                 Move(sink);
-                isWorking = false;
+                isWorking = IsWorking(goal);
                 break;
         }
 
@@ -94,7 +115,7 @@ public class Worker : MonoBehaviour
     {
         if (type == "Coffee")
         {
-            need.energyLevel += 15.0f;
+            need.energyLevel += 75.0f;
             need.bladderLevel -= 0.1f;
         }
 
@@ -124,9 +145,29 @@ public class Worker : MonoBehaviour
         if (NotClean()) { need.hygieneLevel = 10.0f; }
         need.bladderLevel = 1.0f;
     }
+
+    [Task]
+    public void WorkEfficiency(int i)
+    {
+
+        if (i == 1) {
+
+            Debug.Log("energy:" + need.energyLevel);
+
+            if (need.energyLevel < 100 && need.energyLevel > 50)
+            {
+          
+                DoWork(5);
+            }
+            else if (need.energyLevel < 50 && need.energyLevel > 20)
+            {
+                DoWork(4);
+            }
+
+        }    
+
+    }
     /*--- TASKS END ----*/
-
-
     private void Awake()
     {
         need = GetComponent<NeedsCompontent>();
@@ -179,10 +220,6 @@ public class Worker : MonoBehaviour
 	{
         // Check what the agent is doing
         occupation = Occupation();
-
-        // Drain/Increase needs
-        //energy -= Time.deltaTime * occupation * 0.3f;
-        //bladder -= Time.deltaTime * 0.02f;
 
         IsAtGoal(agent.destination);
         UpdateThoughtPosition();
@@ -320,45 +357,14 @@ public class Worker : MonoBehaviour
         }
 
     }
+    
 
-    void WorkEfficiency() {
+    void DoWork(float i) {
 
-        float energy = need.energyLevel;
-        do
-        {
-            if (energy < 100 && energy > 50)
-            {
-                doWork(4);
-                Debug.Log("Work4");
-            }
-            else if (energy < 50 && energy > 20)
-            {
-                doWork(3);
-                Debug.Log("Work3");
-
-            }
-            else if (energy < 20)
-            {
-                doWork(2);
-                Debug.Log("Work2");
-
-            }
-            else if (energy < 5)
-            {
-                doWork(1);
-                Debug.Log("Work1");
-
-            }
-        } while (Math.Abs(energy) > 0.0f); { Debug.Log("death to all"); }
-
-    }
-
-    void doWork(int i) {
-
-        totalWork *= i / 100;
+        totalWork += i*0.1f;
         Debug.Log("Total work: " + totalWork);
 
     }
-
+    
 
 }
