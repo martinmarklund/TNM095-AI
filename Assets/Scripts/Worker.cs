@@ -70,7 +70,30 @@ public class Worker : MonoBehaviour
 
     [Task]
     public bool GoodMatch() {
-        return true;
+        if(isWorking)
+        {
+            // Bit shift the index of the layer (2) to get a bit mask
+            int layerMask = 1 << 2; 
+            // OverlapSphere returns an array of all colliders touching or inside the sphere
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f, layerMask);
+            for(int i = 0; i < hitColliders.Length; i++)
+            {
+                if(hitColliders[i].gameObject == this.gameObject)
+                    continue;
+                
+                Debug.Log(hitColliders[i].gameObject + "," + this.gameObject);
+                // If the tag hit does not match the tag of current GameObject, return false (no good match)
+                if(hitColliders[i].tag == this.tag)
+                {
+                    Task.current.Succeed();
+                    return true;
+                }
+                    
+            }
+            // If we make it through the hit objects (which really should only be one) without any errors, it should be a good match
+        }
+            Task.current.Fail();
+            return false;
     }
 
     [Task]
@@ -197,28 +220,42 @@ public class Worker : MonoBehaviour
     public void WorkEfficiency(int i)
     {
 
+        Debug.Log(i);
+
         if (i == 1) {
 
             //Debug.Log("energy:" + need.energyLevel);
 
             if (need.energyLevel < 100 && need.energyLevel > 50)
             {
-          
-                DoWork(5);
+                DoWork(i*5);
             }
             else if (need.energyLevel < 50 && need.energyLevel > 20)
             {
-                DoWork(4);
+                DoWork(i*4);
             }
 
-        }    
+        }
+        else {
+            
+            if (need.energyLevel < 100 && need.energyLevel > 50)
+            {
+                DoWork(i*5);
+            }
+            else if (need.energyLevel < 50 && need.energyLevel > 20)
+            {
+                DoWork(i*4);
+            }
+
+        }
+
+        Task.current.Succeed();
 
     }
     /*--- TASKS END ----*/
     private void Awake()
     {
         need = GetComponent<NeedsCompontent>();
-
     }
 
     // Start is called before the first frame update
@@ -580,13 +617,11 @@ public class Worker : MonoBehaviour
         }
 
     }
-    
 
     void DoWork(float i) {
 
         totalWork += i*0.1f;
         //Debug.Log("Total work: " + totalWork);
-
     }
     
 

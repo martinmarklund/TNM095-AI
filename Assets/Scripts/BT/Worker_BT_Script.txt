@@ -27,10 +27,11 @@ tree "WorkEfficiency"
         tree "CheckCoworker"
 
 tree "CheckCoworker"
-    sequence
-        //while not GoodMatch()
-            //WorkEfficiency(2)
-        WorkEfficiency(1)
+	fallback
+		sequence 
+			GoodMatch()
+			WorkEfficiency(2)
+		WorkEfficiency(1)
         
 tree "GoToWorkplace"
 	sequence

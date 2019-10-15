@@ -9,8 +9,13 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
 
     public static GameObject[] workers;
+
+    public Material boomerMaterial;
+    public Material millenialMaterial;
+
     private bool thoughtsActive = true;
     private GameObject[] thoughtBubbles;
+    
     /// <summary>
     /// Start is called before the first frame update
     /// </summary>
@@ -30,7 +35,8 @@ public class GameManager : MonoBehaviour
         {
             workers = GameObject.FindGameObjectsWithTag("Worker");
         }
-   
+
+        AsignTags();
     }
     /// <summary>
     /// Update is called once per frame
@@ -60,6 +66,27 @@ public class GameManager : MonoBehaviour
                 thoughtBubbles[i].SetActive(true);
             }
             thoughtsActive = true;
+        }
+    }
+
+    /// <summary>
+    /// Loop through worker array and randomly assign boomer or millenial tag, also change material accordingly
+    /// </sumamry>
+    void AsignTags() {
+        for(int i = 0; i < workers.Length; i++)
+        {
+            int rand = Random.Range(0,2);
+            switch(rand)
+            {
+                case 0:
+                    workers[i].tag = "Millenial";
+                    workers[i].GetComponent<Renderer>().material = millenialMaterial;
+                    break;
+                case 1:
+                    workers[i].tag = "Boomer";
+                    workers[i].GetComponent<Renderer>().material = boomerMaterial;
+                    break;
+            }
         }
     }
 }
