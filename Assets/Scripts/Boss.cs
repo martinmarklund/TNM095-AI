@@ -52,7 +52,7 @@ public class Boss : MonoBehaviour
         keyStrokeTimer = 0;
         isNextPP = false;
         nextPP = -1;
-        speed = 3.5f;
+        //speed = 3.5f;
         agent.destination = office.position;
         playerWasInControll = false;
     }

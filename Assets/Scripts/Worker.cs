@@ -81,7 +81,7 @@ public class Worker : MonoBehaviour
                 if(hitColliders[i].gameObject == this.gameObject)
                     continue;
                 
-                Debug.Log(hitColliders[i].gameObject + "," + this.gameObject);
+                //Debug.Log(hitColliders[i].gameObject + "," + this.gameObject);
                 // If the tag hit does not match the tag of current GameObject, return false (no good match)
                 if(hitColliders[i].tag == this.tag)
                 {
@@ -220,7 +220,7 @@ public class Worker : MonoBehaviour
     public void WorkEfficiency(int i)
     {
 
-        Debug.Log(i);
+       // Debug.Log(i);
 
         if (i == 1) {
 
