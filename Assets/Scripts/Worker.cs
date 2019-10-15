@@ -7,34 +7,18 @@ using Panda;
 using System;
 
 public class Worker : MonoBehaviour
-<<<<<<< HEAD
 {
-    // Position related variables
-    //private Vector3 agentDestination;
-    //public Transform coffeeMachine;
-    public Transform workstation;
-=======
-{
-    // Position related variables
-    //private Vector3 agentDestination;
-    //public Transform coffeeMachine;
-	private Transform workstation;
->>>>>>> cb8168c9277e80d00268981d7e00880a5b6f4a80
-    private Transform boss;
-    //public Transform toilet;
-    //public Transform sink;
 
-<<<<<<< HEAD
-    public float totalWork = 1.0f;
-=======
-    private int totalWork = 1;
+    private Transform boss;
+    public Transform workstation;
+    private float totalWork = 1.0f;
+
     
     private GameObject[] coffeeMachines;
     private GameObject[] workStations;
     private GameObject[] toiletPosistions;
     private GameObject[] sinks;
     private GameObject targetObject;
->>>>>>> cb8168c9277e80d00268981d7e00880a5b6f4a80
 
 
     // Agent related variables
@@ -131,25 +115,6 @@ public class Worker : MonoBehaviour
     [Task]
     void Queue()
     {
-<<<<<<< HEAD
-        switch(goal){
-            case "Coffee":
-                Move(coffeeMachines[FindClosest(coffeeMachines)]);
-                isWorking = IsWorking(goal);
-                break;
-            case "Workstation":
-                Move(workstation);
-                isWorking = IsWorking(goal);
-                break;
-            case "Toilet":
-                Move(toilet);
-                isWorking = IsWorking(goal);
-                break;
-            case "Sink":
-                Move(sink);
-                isWorking = IsWorking(goal);
-                break;
-=======
         queueing = true;
         queueNumber = targetObject.GetComponent<DestinationProperties>().GetFirstFreeQueueArea();
         targetObject.GetComponent<DestinationProperties>().BookQueueAreaState(queueNumber);
@@ -173,7 +138,6 @@ public class Worker : MonoBehaviour
             }
             else
                 Task.current.Fail();
->>>>>>> cb8168c9277e80d00268981d7e00880a5b6f4a80
         }
         else
         {

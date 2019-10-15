@@ -6,23 +6,6 @@ public class UseArea {
 
     public Transform areaTransform;
     public bool inUse;        
-    /*public bool inUse {
-        get
-        {
-            // If no workers are standing at the use area, return false
-            foreach(GameObject worker in GameManager.workers) {
-                if(Vector3.Distance(areaTransform.position, worker.transform.position) < 1)
-                {
-                    return true;
-                } 
-            }
-            return inUse;
-        }
-        set(bool value)
-        {
-            inUse = value;
-        }
-    }*/
     
     public UseArea(Transform t)
     {
@@ -44,17 +27,6 @@ public class QueueArea {
 
     public Transform areaTransform;
     public bool inUse;
-    /*public bool inUse {
-        get
-        {
-            // If no workers are standing at the queue area, return false
-            foreach(GameObject worker in GameManager.workers) {
-                if(Vector3.Distance(areaTransform.position, worker.transform.position) < 1)
-                    return true;
-            }
-            return false;
-        }
-    }*/
 
     public QueueArea(Transform t)
     {

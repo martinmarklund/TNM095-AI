@@ -10,7 +10,6 @@ tree("Root")
 					tree "GetCoffe"
 				tree "Work"
 			
-<<<<<<< HEAD
 tree "Work" 
         fallback
             parallel
@@ -21,15 +20,7 @@ tree "Work"
                             //not Succeed
                         
                 tree "GoToWorkplace"
-=======
-tree "Work"	
-	fallback
-		while isWorking
-			//Work
-			Succeed
-		tree "GoToWorkplace"
-		
->>>>>>> cb8168c9277e80d00268981d7e00880a5b6f4a80
+
 
 
 tree "WorkEfficiency"
@@ -42,13 +33,6 @@ tree "CheckCoworker"
         WorkEfficiency(1)
         
 tree "GoToWorkplace"
-<<<<<<< HEAD
-    sequence
-        Move("Workstation")
-        arrived //Check if there
-        //Function go to workplace
-        //Check if there
-=======
 	sequence
 		Move("Workstation")		
 		mute
@@ -60,7 +44,6 @@ tree "GoToWorkplace"
 		//Wait(1000)
 		//Function go to workplace
 		//Check if there
->>>>>>> cb8168c9277e80d00268981d7e00880a5b6f4a80
 
 tree "GetCoffe"
 	sequence
