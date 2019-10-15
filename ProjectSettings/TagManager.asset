@@ -13,6 +13,7 @@ TagManager:
   - Door
   - Toilet
   - Thought
+  - Sink
   layers:
   - Default
   - TransparentFX

@@ -10,6 +10,7 @@ tree("Root")
 					tree "GetCoffe"
 				tree "Work"
 			
+<<<<<<< HEAD
 tree "Work" 
         fallback
             parallel
@@ -20,6 +21,15 @@ tree "Work"
                             //not Succeed
                         
                 tree "GoToWorkplace"
+=======
+tree "Work"	
+	fallback
+		while isWorking
+			//Work
+			Succeed
+		tree "GoToWorkplace"
+		
+>>>>>>> cb8168c9277e80d00268981d7e00880a5b6f4a80
 
 
 tree "WorkEfficiency"
@@ -32,15 +42,33 @@ tree "CheckCoworker"
         WorkEfficiency(1)
         
 tree "GoToWorkplace"
+<<<<<<< HEAD
     sequence
         Move("Workstation")
         arrived //Check if there
         //Function go to workplace
         //Check if there
+=======
+	sequence
+		Move("Workstation")		
+		mute
+			repeat 
+				not tree "QueueTree"			
+		MoveToUse()
+		AssignWorkStation()
+		//arrived //Check if there
+		//Wait(1000)
+		//Function go to workplace
+		//Check if there
+>>>>>>> cb8168c9277e80d00268981d7e00880a5b6f4a80
 
 tree "GetCoffe"
 	sequence
-		tree "GoToMachine"		
+		tree "GoToMachine"	
+		mute
+			repeat 
+				not tree "QueueTree"			
+		MoveToUse()
 		tree "Drink"
 
 tree "GoToMachine"
@@ -49,19 +77,57 @@ tree "GoToMachine"
 		arrived
 
 tree "Drink"
-	RefillEnergy("Coffee") //Function refill stamina
+	sequence
+		Wait(300)
+		RefillEnergy("Coffee") //Function refill stamina
 
 tree "VisitBathroom"
-    sequence
-        Move("Toilet")
-        Wait(5.0)
-        while NotClean
-            tree "WashHands"
+	sequence
+		Move("Toilet")
+		mute
+			repeat 
+				not tree "QueueTree"			
+		MoveToUse()
+		Wait(5.0)
+		while NotClean
+			tree "WashHands"
 
 
 tree "WashHands"
     sequence
         Move("Sink")
         Wait(5.0)
-        Bathroom()
-      
+        Bathroom()     
+
+tree "QueueTree"
+	fallback
+		sequence
+			//IsFirstinLine()
+			not IsOccupied()
+			Stopqueueing()
+		fallback
+			sequence 
+				not IsQueueFull()
+				sequence
+					Queue()
+					repeat
+						fallback
+							sequence
+								queueing
+								mute
+									fallback
+										sequence
+											not IsFirstinLine()								
+											mute
+												sequence
+													IsNextFree()
+													Wait(10)
+										sequence
+											not IsOccupied()
+											Stopqueueing()						
+
+			sequence
+				IsQueueFull()
+				NeedsNewTarget()
+				FindNewTarget()
+				Fail

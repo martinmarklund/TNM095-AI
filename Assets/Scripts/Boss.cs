@@ -18,8 +18,8 @@ public class Boss : MonoBehaviour
     private float keyStrokeTimer;
     private float speed;
     private Task move;
-    private int nextPP;
-    private bool arrived;        
+    public int nextPP;
+    public bool arrived;        
     private bool playerWasInControll;
 
     [Task]
@@ -73,9 +73,9 @@ public class Boss : MonoBehaviour
     // True if agent is close enough to goal, otherwise false
     public void IsAtGoal()
     {        
-        if (!arrived && Vector3.Distance(agent.transform.position, agent.destination) < 2.0f  /*&& agent.remainingDistance < 0.1f*/)
-        {                     
-            move.Complete(true);
+        if (!arrived && (Vector3.Distance(agent.transform.position, agent.destination) <= 2.0f))
+        {            
+            move.Complete(true);            
             arrived = true;
             nextPP++;
         }
@@ -149,7 +149,7 @@ public class Boss : MonoBehaviour
     [Task]
     //Function to set a patrolpoint as destination (called from tree)
     public void GoToPP()
-    {
+    {        
         //If we have been in controll we need to find closest patrol point
         if (playerWasInControll)
         {
@@ -165,9 +165,9 @@ public class Boss : MonoBehaviour
             nextPP = -1;
         }
         else
-        {                        
-            agent.destination = patrolPoints[nextPP];            
-            move = Task.current;            
+        {
+            move = Task.current;
+            agent.destination = patrolPoints[nextPP];                        
             arrived = false;
         }        
     }
