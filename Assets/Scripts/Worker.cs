@@ -70,7 +70,18 @@ public class Worker : MonoBehaviour
 
     [Task]
     public bool GoodMatch() {
-        return true;
+            // Bit shift the index of the layer (2) to get a bit mask
+            int layerMask = 1 << 2; 
+            // OverlapSphere returns an array of all colliders touching or inside the sphere
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1.0f, layerMask);
+            for(int i = 0; i < hitColliders.Length; i++)
+            {
+                // If the tag hit does not match the tag of current GameObject, return false (no good match)
+                if(hitColliders[i].tag != this.tag)
+                    return false;
+            }
+            // If we make it through the hit objects (which really should only be one) without any errors, it should be a good match.
+            return true;
     }
 
     [Task]
@@ -214,6 +225,7 @@ public class Worker : MonoBehaviour
         }    
 
     }
+
     /*--- TASKS END ----*/
     private void Awake()
     {
