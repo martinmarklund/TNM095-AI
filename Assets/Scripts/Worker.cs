@@ -185,8 +185,9 @@ public class Worker : MonoBehaviour
     {
         if (type == "Coffee")
         {
-            need.energyLevel += 75.0f;
-            need.bladderLevel -= 0.1f;
+            
+            need.energyLevel += UnityEngine.Random.Range(100.0f, 1000.0f);
+            need.bladderLevel -= UnityEngine.Random.Range(0.1f, 0.5f);
         }
 
         arrived = false;
@@ -213,7 +214,7 @@ public class Worker : MonoBehaviour
     public void Bathroom()
     {
         if (NotClean()) { need.hygieneLevel = 10.0f; }
-        need.bladderLevel = 1.0f;
+        need.bladderLevel = UnityEngine.Random.Range(1.0f, 5.0f);
     }
 
     [Task]

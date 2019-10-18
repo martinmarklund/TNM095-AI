@@ -14,10 +14,10 @@ tree "Patrol"
 		isNextPP
 		Sequence
 			GoToPP()
-			Wait(10)
+			Wait(50)
 
 
 tree "Office"
 	Sequence
 		GoToOffice()
-		Wait(300)
+		Wait(500)

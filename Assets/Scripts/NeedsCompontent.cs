@@ -13,8 +13,8 @@ public class NeedsCompontent : MonoBehaviour
 
     private void Awake()
     {
-        energyLevel = Random.Range(90.0f, 100.0f);
-        bladderLevel = Random.Range(0.5f, 1.0f);
+        energyLevel = Random.Range(90.0f, 250.0f);
+        bladderLevel = Random.Range(0.5f, 2.0f);
         hygieneLevel = Random.Range(9.0f, 10.0f);
     }
 
